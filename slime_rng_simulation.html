@@ -1,330 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta charset="UTF-8">
- <meta name="viewport" content="width=deivce-width, initial-scale=1.0">
- <title>Slime RNG Simulation</title>
- <style>
-  *, *::before, *::after {box-sizing: border-box; margin: 0; padding: 0;}
-  body{
-   background: #13121a;
-   min-height: 100vh;
-   padding: 2rem 1.5rem;
-   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI, sans-serif;
-  }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slime RNG Simulation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #13121a;
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
 
-  .wrapper{
-   max-width: 1140px;
-   margin: 0 auto;
-   background: #0f0e1a;
-   border-radius: 20px;
-   padding: 2rem;
-   border: 1px solid #1e1a30;
-   position: relative;
-   overflow: hidden;
-  }
+    .wrapper {
+      max-width: 1140px;
+      margin: 0 auto;
+      background: #0f0e1a;
+      border-radius: 20px;
+      padding: 2rem;
+      border: 1px solid #1e1a30;
+      position: relative;
+      overflow: hidden;
+    }
 
-  .bg-orb{
-   position: absolute;
-   border-radius: 50%;
-   filter: blur(60px);
-   opacity: 0.2;
-   pointer-events: none;
-  }
-  .orb1 {width: 320px; height: 320px; background: #6040d0; top: -80px; left: -60px;}
-  .orb2 {width: 240px; height: 240px; background: #a040c0; top: -40px; right: -40px;}
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+    .orb1 { width: 320px; height: 320px; background: #6040d0; top: -80px; left: -60px; }
+    .orb2 { width: 240px; height: 240px; background: #a040c0; top: -40px; right: -40px; }
 
-  .header{
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   position: relative;
-   z-index: 1;
-  }
+    .header { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+    .title-block { display: flex; flex-direction: column; gap: 2px; }
+    .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #7060b0; }
+    .title {
+      font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1;
+      background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .alpha-tag {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 14px 5px 10px; border-radius: 999px;
+      border: 1px solid #4a3880; background: rgba(80, 50, 160, 0.18);
+    }
+    .alpha-dot { width: 6px; height: 6px; border-radius: 50%; background: #9070e0; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+    .alpha-text { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #b090f0; }
 
-  .header-left{
-   display: flex;
-   align-items: center;
-   gap: 14px;
-  }
+    .divider-line {
+      margin-top: 1.75rem; height: 1px;
+      background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
+      position: relative; z-index: 1;
+    }
 
-  .title-block{
-   display: flex;
-   flex-direction: column;
-   gap: 2px;
-  }
+    .content { position: relative; z-index: 1; margin-top: 1.75rem; }
 
-  .eyebrow{
-   font-size: 10px;
-   font-weight: 500;
-   letter-spacing: 0.18em;
-   text-transform: uppercase;
-   color: #7060b0;
-  }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-title { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .equipped-badge {
+      font-size: 12px; font-weight: 600; color: #5a5080;
+      background: rgba(80, 50, 120, 0.18); border: 1px solid #2e2448;
+      border-radius: 999px; padding: 3px 12px;
+    }
 
-  .title{
-   font-size: 28px;
-   font-weight: 700;
-   letter-spacing: -0.5px;
-   line-height: 1;
-   background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
-   -webkit-background-clip: text;
-   -webkit-text-fill-color: transparent;
-   background-clip: text;
-  }
+    .controls-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+    .ctrl-label { font-size: 12px; color: #5a5080; white-space: nowrap; }
+    .ctrl-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: 1px solid #2e2448;
+      background: #1a1828; color: #a090d0; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1; transition: all 0.12s; font-family: inherit;
+    }
+    .ctrl-btn:hover { background: #252040; border-color: #5040a0; color: #c0b0f0; }
+    .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .ctrl-count { font-size: 14px; font-weight: 700; color: #c0b0f0; min-width: 20px; text-align: center; }
 
-  .alpha-tag{
-   display: flex;
-   align-items: center;
-   gap: 6px;
-   padding: 5px 14px 5px 10px;
-   border-radius: 999px;
-   border: 1px solid #4a3880;
-   background: rgba(80, 50, 160, 0.18);
-  }
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
 
-  .alpha-dot{
-   width: 6px;
-   height: 6px;
-   border-radius: 50%;
-   background: #9070e0;
-   animation: pulse 2s ease-in-out infinite;
-  }
+    .slot {
+      aspect-ratio: 1; border-radius: 14px; border: 1.5px dashed #2e2448;
+      background: #15132a; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.15s; position: relative;
+    }
+    .slot:hover { border-color: #5040a0; background: #1c1838; }
+    .slot-plus {
+      width: 36px; height: 36px; border-radius: 10px;
+      border: 1.5px solid #3a3060; background: #1e1a36;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px; transition: all 0.15s;
+    }
+    .slot:hover .slot-plus { border-color: #6050b0; background: #252050; }
+    .slot-plus-icon { font-size: 18px; color: #4a4080; line-height: 1; transition: color 0.15s; }
+    .slot:hover .slot-plus-icon { color: #8070c0; }
+    .slot-label { font-size: 10px; color: #3a3060; font-weight: 500; letter-spacing: 0.06em; transition: color 0.15s; }
+    .slot:hover .slot-label { color: #7060b0; }
 
-  @keyframes pulse{
-   0%, 100% {opacity: 1; transform: scale(1);}
-   50% {opacity: 0.5; transform: scale(0.7);}
-  }
+    .inv-divider {
+      margin-top: 2rem; height: 1px;
+      background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
+    }
 
-  .alpha-text{
-   font-size: 11px;
-   font-weight: 700;
-   letter-spacing: 0.12em;
-   text-transform: uppercase;
-   color: #b090f0;
-  }
+    .inv-section {
+      overflow: hidden; max-height: 0; opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.35s ease, margin-top 0.35s ease;
+      margin-top: 0;
+    }
+    .inv-section.open { max-height: 900px; opacity: 1; margin-top: 1.5rem; }
 
-  .divider-line{
-   margin-top: 1.75rem;
-   height: 1px;
-   background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
-   position: relative;
-   z-index: 1;
-  }
+    .inv-body { display: flex; gap: 14px; align-items: flex-start; }
 
-  .content{
-   position: relative;
-   z-index: 1;
-   margin-top: 1.75rem;
-  }
+    .inv-left { flex: 1; min-width: 0; }
 
-  .section-header{
-   display: flex;
-   align-items: center;
-   justify-content: space-between;
-   margin-bottom: 1rem;
-  }
+    .inv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .inv-label { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .inv-close-btn {
+      font-size: 11px; font-weight: 600; color: #4a4070;
+      background: none; border: 1px solid #2a2248; border-radius: 999px;
+      padding: 3px 12px; cursor: pointer; font-family: inherit; transition: all 0.12s;
+    }
+    .inv-close-btn:hover { color: #9080c0; border-color: #4a3880; background: rgba(80,50,120,0.15); }
 
-  .section-title{
-   font-size: 12px;
-   font-weight: 700;
-   color: #7060c0;
-   letter-spacing: 0.1em;
-   text-transform: uppercase;
-  }
+    .inv-search {
+      width: 100%; padding: 10px 14px;
+      background: #1a1828; border: 1.5px solid #2a2245;
+      border-radius: 10px; color: #e8e8f0; font-size: 14px;
+      font-family: inherit; outline: none; margin-bottom: 1rem;
+      transition: border-color 0.15s;
+    }
+    .inv-search::placeholder { color: #3a3460; }
+    .inv-search:focus { border-color: #5a50a0; }
 
-  .equipped-badge{
-   font-size: 12px;
-   font-weight: 600;
-   color: #5a5080;
-   background: rgba(80, 50, 120, 0.18);
-   border: 1px solid #2e2448;
-   border-radius: 999px;
-   padding: 3px 12px
-  }
+    .inv-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 4px;
+    }
+    .inv-grid::-webkit-scrollbar { width: 5px; }
+    .inv-grid::-webkit-scrollbar-track { background: transparent; }
+    .inv-grid::-webkit-scrollbar-thumb { background: #2e2448; border-radius: 3px; }
 
-  .controls-row{
-   display: flex;
-   align-items: center;
-   gap: 10px;
-   margin-bottom: 1.25rem;
-  }
+    .inv-card {
+      border-radius: 12px; border: 1.5px solid #2a2245;
+      background: #18162c; padding: 14px 10px 12px;
+      text-align: center; cursor: pointer; transition: all 0.12s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .inv-card:hover { background: #201e3a; border-color: #5040a0; }
+    .inv-card.selected { border-color: #8060d0; background: #221e42; }
 
-  .ctrl-label{
-   font-size: 12px;
-   color: #5a5080;
-   white-space: nowrap;
-  }
+    .inv-card-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      background: #221e3a; border: 1px solid #2e2a4a;
+      display: flex; align-items: center; justify-content: center; margin-bottom: 2px;
+    }
+    .inv-card-icon-letter { font-size: 16px; font-weight: 700; color: #6050a0; }
+    .inv-card-name { font-size: 12px; font-weight: 600; color: #d0c8f0; }
+    .inv-card-tier { font-size: 10px; font-weight: 500; }
+    .inv-no-results { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #2e2a48; font-size: 13px; }
 
-  .ctrl-btn{
-   width: 28px;
-   height: 28px;
-   border-radius: 8px;
-   border: 1px solid #2e2448;
-   background: #1a1828;
-   color: #a090d0;
-   font-size: 16px;
-   cursor: pointer;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   line-height: 1;
-   transition: all 0.12s;
-   font-family: inherit;
-  }
-  .ctrl-btn:hover{background: #252040; border-color: #5040a0; color: #c0b0f0;}
-  ctrl-btn:disabled{opacity: 0.3; cursor: not-allowed;}
-  
-  .ctrl-count{
-   font-size: 14px;
-   font-weight: 700;
-   color: #c0b0f0;
-   min-width: 20px;
-   text-align: center;
-  }
+    .mut-panel {
+      width: 200px; flex-shrink: 0;
+      background: #13112a; border: 1.5px solid #2a2245;
+      border-radius: 14px; padding: 1.25rem 1rem;
+      display: flex; flex-direction: column; gap: 10px;
+      opacity: 0; transform: translateX(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+    .mut-panel.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
 
-  .slots-grid{
-   display: grid;
-   grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-   gap: 10px;
-  }
+    .mut-panel-title { font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
+    .mut-slime-name { font-size: 14px; font-weight: 700; color: #d0c8f0; margin-bottom: 6px; }
+    .mut-divider { height: 1px; background: #2a2245; margin: 2px 0; }
 
-  .slot{
-   aspect-ratio: 1;
-   border-radius: 14px;
-   border: 1.5px dashed #2e2448;
-   background: #15132a;
-   display: flex;
-   flex-direction: column;
-   align-items: center;
-   justify-content: center;
-   cursor: pointer;
-   transition: all 0.15s;
-   position: relative;
-  }
-  .slot:hover{border-color: #5040a0; background: #1c1838;}
+    .mut-tags { display: flex; flex-direction: column; gap: 7px; }
+    .mut-tag {
+      padding: 8px 12px; border-radius: 8px; border: 1.5px solid #2a2245;
+      background: #1a1828; color: #6050a0; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.12s; font-family: inherit; text-align: left;
+      letter-spacing: 0.04em;
+    }
+    .mut-tag:hover { border-color: #4a3880; color: #a090d0; background: #201e38; }
+    .mut-tag.active { border-color: #7060c0; background: #221e42; color: #c0b0f0; }
 
-  .slot-plus{
-   width: 36px;
-   height: 36px;
-   border-radius: 10px;
-   border: 1.5px solid #3a3060;
-   background: #1e1a36;
-   display: flex;
-   align-items: center;
-   justify-content: center;
-   margin-bottom: 6px;
-   transition: all 0.15s;
-  }
-  .slot:hover .slot-plus-icon{color: #8070c0;}
-
-  .slot-label{
-   font-size: 10px;
-   color: #3a3060;
-   font-weight: 500;
-   letter-spacing: 0.06em;
-   transition: color 0.15s;
-  }
-  .slot:hover .slot-label{color: #7060b0}
-
-  .inv-divider{
-   margin-top: 2rem;
-   height: 1px;
-   background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
-  }
-
-  .inv-section{margin-top: 1.5rem;}
-
-  .inv-label{
-   font-size: 12px;
-   font-weight: 700;
-   color: #3a3060;
-   letter-spacing: 0.1em;
-   text-transform: uppercase;
-   margin-bottom: 0.75rem;
-  }
-
-  .inv-empty{
-   background: #15132a;
-   border: 1.5px dashed #1e1a30;
-   border-radius: 14px;
-   padding: 2.5rem;
-   text-align: center;
-   color: #2e2a48;
-   font-size: 13px;
-  }
- </style>
+    .apply-btn {
+      margin-top: 4px; padding: 10px; border-radius: 10px;
+      border: 1.5px solid #5040a0; background: rgba(80,50,160,0.2);
+      color: #c0b0f0; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all 0.12s;
+      letter-spacing: 0.04em;
+    }
+    .apply-btn:hover { background: rgba(100,70,200,0.35); border-color: #8060d0; color: #e0d8ff; }
+  </style>
 </head>
-
 <body>
- <div class="wrapper">
-  <div class="bg-orb orb1"></div>
-  <div class="bg-orb orb2"></div>
+  <div class="wrapper">
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
 
-  <div class="header">
-   <div class="header-left">
-    <div class="title-block">
-     <span class="eyebrow">Simulate Slime Teams, Stats & More!</span>
-     <span class="title">Slime RNG Simulation</span>
+    <div class="header">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="title-block">
+          <span class="eyebrow">Simulate Slime Teams, Stats &amp; More!</span>
+          <span class="title">Slime RNG Simulation</span>
+        </div>
+        <div class="alpha-tag">
+          <div class="alpha-dot"></div>
+          <span class="alpha-text">Alpha</span>
+        </div>
+      </div>
     </div>
-    <div class="alpha-tag">
-     <div class="alpha-dot"></div>
-     <span class="alpha-text">Alpha</span>
+
+    <div class="divider-line"></div>
+
+    <div class="content">
+      <div class="section-header">
+        <span class="section-title">Slime Team</span>
+        <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
+      </div>
+
+      <div class="controls-row">
+        <span class="ctrl-label">Max Slots</span>
+        <button class="ctrl-btn" id="btn-minus" onclick="ChangeSlots(-1)">−</button>
+        <span class="ctrl-count" id="slot-count">1</span>
+        <button class="ctrl-btn" id="btn-plus" onclick="ChangeSlots(1)">+</button>
+      </div>
+
+      <div class="slots-grid" id="slots-grid"></div>
+
+      <div class="inv-divider"></div>
+
+      <div class="inv-section" id="inv-section">
+        <div class="inv-header">
+          <span class="inv-label">Inventory — select a slime</span>
+          <button class="inv-close-btn" onclick="CloseInventory()">✕ Close</button>
+        </div>
+        <div class="inv-body">
+          <div class="inv-left">
+            <input type="text" class="inv-search" id="inv-search" placeholder="Search slimes..." oninput="RenderInventory()" />
+            <div class="inv-grid" id="inv-grid"></div>
+          </div>
+          <div class="mut-panel" id="mut-panel">
+            <span class="mut-panel-title">Mutations</span>
+            <span class="mut-slime-name" id="mut-slime-name">—</span>
+            <div class="mut-divider"></div>
+            <div class="mut-tags" id="mut-tags"></div>
+            <button class="apply-btn" onclick="ApplySlime()">Equip →</button>
+          </div>
+        </div>
+      </div>
     </div>
-   </div>
   </div>
 
-  <div class="divider-line"></div>
-
-  <div class="content">
-   <div class="section-header">
-    <span class="section-title">Slime Team</span>
-    <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
-   </div>
-
-   <div class="controls-row">
-    <span class="ctrl-label">Max Slots</span>
-    <button class="ctrl-btn" id="btn-minus" onclick="ChangeSlots(-1)">-</button>
-    <span class="ctrl-count" id="slot-count">1</span>
-    <button class="ctrl-btn" id="btn-plus" onclick="ChangeSlots(1)">+</button>
-   </div>
-
-   <div class="slots-grid" id="slots-grid"></div>
-
-   <div class="inv-divider"></div>
-   <div class="inv-section">
-    <div class="inv-label">Inventory</div>
-    <div class="inv-empty">Coming Soon!</div>
-   </div>
- </div>
-
   <script>
-   let MaxSlots = 1;
-   const Equipped = 0;
+    const slimes = [
+      { name: "Goopy", tier: "Basic", color: "#aaaaaa" },
+    ];
 
-   function ChangeSlots(delta){
-    MaxSlots = Math.max(1, Math.min(8, MaxSlots + delta));
-    document.getElementById('slot-count').textContent = MaxSlots;
-    document.getElementById('btn-minus').disabled = MaxSlots <= 1;
-    document.getElementById('btn-plus').disabled = MaxSlots >= 8;
-    document.getElementById('equipped-label').textContent = Equipped + ' / ' + MaxSlots + ' Equipped';
-    RenderSlots();
-   }
+    const MutationDefs = ["Shiny", "Big", "Huge", "Inverted"];
 
-   function RenderSlots(){
-    const grid = document.getElementById('slots-grid');
-    grid.innerHTML = '';
-    for (let i = 0; i < MaxSlots; i++){
-     const slot = document.createElement('div');
-     slot.className = 'slot';
-     slot.innerHTML = `
-        <div class="slot-plus"><span class="slot-plus-icon">+</span></div>
-        <span class="slot-label">Empty slot</span>
-      `;
-      grid.appendChild(slot);
+    let MaxSlots = 1;
+    let ActiveSlotIndex = null;
+    let PendingSlime = null;
+    let ActiveMutations = new Set();
+   
+    const SlotData = Array(8).fill(null);
+
+    function FuzzyScore(query, target) {
+      query = query.toLowerCase(); target = target.toLowerCase();
+      if (target.includes(query)) return 1000 + (1000 - target.indexOf(query));
+      let qi = 0, score = 0, lastMatch = -1;
+      for (let ti = 0; ti < target.length && qi < query.length; ti++) {
+        if (target[ti] === query[qi]) { score += 10 - (ti - lastMatch - 1); lastMatch = ti; qi++; }
+      }
+      return qi === query.length ? score : -1;
     }
-   }
-   ChangeSlots(0);
+
+    function ChangeSlots(delta) {
+      const prev = MaxSlots;
+      MaxSlots = Math.max(1, Math.min(8, MaxSlots + delta));
+      if (MaxSlots < prev) {
+        for (let i = MaxSlots; i < prev; i++) SlotData[i] = null;
+      }
+      document.getElementById('slot-count').textContent = MaxSlots;
+      document.getElementById('btn-minus').disabled = MaxSlots <= 1;
+      document.getElementById('btn-plus').disabled = MaxSlots >= 8;
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
+
+    function UpdateEquippedLabel() {
+      const equipped = SlotData.slice(0, MaxSlots).filter(Boolean).length;
+      document.getElementById('equipped-label').textContent = equipped + ' / ' + MaxSlots + ' Equipped';
+    }
+
+    function RenderSlots() {
+      const grid = document.getElementById('slots-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < MaxSlots; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        const data = SlotData[i];
+        if (data) {
+          slot.style.borderStyle = 'solid';
+          slot.style.borderColor = data.color;
+          slot.style.background = '#1a1636';
+         
+          const initials = data.name.slice(0, 2).toUpperCase();
+          const MutLabel = data.mutations && data.mutations.length ? data.mutations.join(', ') : '';
+         
+          slot.innerHTML = `
+            <div class="slot-plus" style="border-color:${data.color}44;background:#1e1a36;width:44px;height:44px;">
+              <span style="font-size:15px;font-weight:700;color:${data.color}">${initials}</span>
+            </div>
+            <span class="slot-label" style="color:${data.color};margin-top:4px;">${data.name}</span>
+            <span style="font-size:9px;color:#5a5080;margin-top:1px;">${data.tier}</span>
+            ${MutLabel ? `<span style="font-size:8px;color:#7060a0;margin-top:2px;">${MutLabel}</span>` : ''}
+          `;
+        } else {
+          slot.innerHTML = `
+            <div class="slot-plus"><span class="slot-plus-icon">+</span></div>
+            <span class="slot-label">Empty Slot</span>
+          `;
+        }
+        const idx = i;
+        slot.onclick = () => OpenInventory(idx);
+        grid.appendChild(slot);
+      }
+    }
+
+    function OpenInventory(SlotIndex) {
+      ActiveSlotIndex = SlotIndex;
+      PendingSlime = null;
+      ActiveMutations.clear();
+     
+      const section = document.getElementById('inv-section');
+     
+      section.classList.add('open');
+      document.getElementById('inv-search').value = '';
+      document.getElementById('mut-panel').classList.remove('visible');
+      RenderInventory();
+      RenderMutPanel();
+      SetTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+
+    function CloseInventory() {
+      document.getElementById('inv-section').classList.remove('open');
+      ActiveSlotIndex = null;
+      PendingSlime = null;
+      ActiveMutations.clear();
+    }
+
+    function RenderInventory() {
+      const query = document.getElementById('inv-search').value.trim();
+      const grid = document.getElementById('inv-grid');
+      grid.innerHTML = '';
+      let results = slimes
+        .map(s => ({ slime: s, score: query ? FuzzyScore(query, s.name) : 0 }))
+        .filter(r => r.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map(r => r.slime);
+      if (results.length === 0) {
+        grid.innerHTML = '<div class="inv-no-results">No Slimes Found</div>';
+        return;
+      }
+      results.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'inv-card';
+        if (PendingSlime && PendingSlime.name === s.name) card.classList.add('selected');
+        const initials = s.name.slice(0, 2).toUpperCase();
+        card.innerHTML = `
+          <div class="inv-card-icon"><span class="inv-card-icon-letter">${initials}</span></div>
+          <span class="inv-card-name">${s.name}</span>
+          <span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>
+        `;
+        card.onclick = () => SelectPending(s);
+        grid.appendChild(card);
+      });
+    }
+
+    function SelectPending(slime) {
+      PendingSlime = slime;
+      ActiveMutations.clear();
+      document.getElementById('mut-panel').classList.add('visible');
+      document.getElementById('mut-slime-name').textContent = slime.name;
+      RenderMutPanel();
+      RenderInventory();
+    }
+
+    function RenderMutPanel() {
+      const container = document.getElementById('mut-tags');
+      container.innerHTML = '';
+      mutationDefs.forEach(m => {
+        const btn = document.createElement('button');
+        btn.className = 'mut-tag' + (ActiveMutations.has(m) ? ' active' : '');
+        btn.textContent = m;
+        btn.onclick = () => {
+          if (ActiveMutations.has(m)) ActiveMutations.delete(m);
+          else ActiveMutations.add(m);
+          RenderMutPanel();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function ApplySlime() {
+      if (ActiveSlotIndex === null || !PendingSlime) return;
+      SlotData[ActiveSlotIndex] = {
+        ...PendingSlime,
+        mutations: [...ActiveMutations],
+      };
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
+
+    ChangeSlots(0);
   </script>
 </body>
 </html>
