@@ -61,14 +61,12 @@
 
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
     .section-title { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
-
     .section-header-right { display: flex; align-items: center; gap: 10px; }
     .equipped-badge {
       font-size: 12px; font-weight: 600; color: #5a5080;
       background: rgba(80, 50, 120, 0.18); border: 1px solid #2e2448;
       border-radius: 999px; padding: 3px 12px;
     }
-
     .clear-btn {
       font-size: 11px; font-weight: 600; color: #6a3040;
       background: rgba(120, 40, 60, 0.12); border: 1px solid #4a2030;
@@ -100,26 +98,17 @@
       position: absolute; border-radius: 50%;
       filter: blur(40px); opacity: 0.15; pointer-events: none;
     }
-    .team-stats-orb-1 { width: 160px; height: 160px; background: #6040d0; top: -40px; left: -30px }
-    .team-stats-orb-2 { width: 120px; height: 120px; background: #a040c0; bottom: -30px; right: 40px }
-    .team-stats-label {
-      font-size: 10px; font-weight: 700; color: #4a4070;
-      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 4px;
-      position: relative; z-index: 1;
-    }
+    .team-stats-orb-1 { width: 160px; height: 160px; background: #6040d0; top: -40px; left: -30px; }
+    .team-stats-orb-2 { width: 120px; height: 120px; background: #a040c0; bottom: -30px; right: 40px; }
     .team-stats-left { position: relative; z-index: 1; }
     .team-stats-title {
       font-size: 13px; font-weight: 700; color: #7060c0;
       letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px;
     }
     .team-stats-subtitle { font-size: 10px; color: #3a3460; }
-    .team-stats-values {
-      display: flex; gap: 2rem; position: relative; z-index: 1;
-    }
+    .team-stats-values { display: flex; gap: 2rem; position: relative; z-index: 1; }
     .team-stat-block { display: flex; flex-direction: column; align-items: flex-end; }
-    .team-stat-value {
-      font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1;
-    }
+    .team-stat-value { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
     .team-stat-value.atk {
       background: linear-gradient(120deg, #ffcc88 0%, #ff9040 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
@@ -129,7 +118,7 @@
       -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
     .team-stat-icon { font-size: 11px; color: #4a4070; margin-bottom: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
-    
+
     .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
 
     .slot {
@@ -154,17 +143,14 @@
     .slot-tier { font-size: 9px; color: #5a5080; text-align: center; }
     .slot-mut { font-size: 8px; color: #8070b0; text-align: center; line-height: 1.4; }
     .slot-level { font-size: 9px; color: #4a4070; text-align: center; margin-top: 1px; }
-    
+
     .slot-tooltip {
-      display: none;
-      position: absolute;
-      bottom: calc(100% + 8px);
-      left: 50%; transform: translateX(-50%);
+      display: none; position: absolute;
+      bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
       background: #1a1630; border: 1.5px solid #3a3060;
       border-radius: 12px; padding: 12px 14px;
       min-width: 170px; z-index: 100;
-      pointer-events: none;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      pointer-events: none; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
     }
     .slot:hover .slot-tooltip { display: block; }
     .tooltip-fullname { font-size: 13px; font-weight: 700; color: #e0d8ff; margin-bottom: 3px; }
@@ -173,7 +159,7 @@
     .tooltip-divider { height: 1px; background: #2a2245; margin-bottom: 8px; }
     .tooltip-stat { font-size: 12px; font-weight: 600; color: #d0c8f0; margin-bottom: 3px; }
     .tooltip-level { font-size: 10px; color: #5a5080; margin-top: 4px; }
-    
+
     .inv-divider {
       margin-top: 2rem; height: 1px;
       background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
@@ -184,7 +170,7 @@
       transition: max-height 0.4s ease, opacity 0.35s ease, margin-top 0.35s ease;
       margin-top: 0;
     }
-    .inv-section.open { max-height: 900px; opacity: 1; margin-top: 1.5rem; }
+    .inv-section.open { max-height: 1000px; opacity: 1; margin-top: 1.5rem; }
 
     .inv-body { display: flex; gap: 14px; align-items: flex-start; }
     .inv-left { flex: 1; min-width: 0; }
@@ -199,11 +185,10 @@
     .inv-close-btn:hover { color: #9080c0; border-color: #4a3880; background: rgba(80,50,120,0.15); }
 
     .inv-search {
-      width: 100%; padding: 10px 14px;
-      background: #1a1828; border: 1.5px solid #2a2245;
-      border-radius: 10px; color: #e8e8f0; font-size: 14px;
-      font-family: inherit; outline: none; margin-bottom: 1rem;
-      transition: border-color 0.15s;
+      width: 100%; padding: 10px 14px; background: #1a1828;
+      border: 1.5px solid #2a2245; border-radius: 10px;
+      color: #e8e8f0; font-size: 14px; font-family: inherit;
+      outline: none; margin-bottom: 1rem; transition: border-color 0.15s;
     }
     .inv-search::placeholder { color: #3a3460; }
     .inv-search:focus { border-color: #5a50a0; }
@@ -227,7 +212,7 @@
     .inv-card-name { font-size: 13px; font-weight: 700; color: #d0c8f0; }
     .inv-card-tier { font-size: 10px; font-weight: 500; }
     .inv-no-results { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #2e2a48; font-size: 13px; }
-    
+
     .mut-panel {
       width: 210px; flex-shrink: 0;
       background: #13112a; border: 1.5px solid #2a2245;
@@ -239,9 +224,9 @@
     }
     .mut-panel.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
 
-    .mut-panel-title { font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2px; }
-    .mut-slime-name { font-size: 14px; font-weight: 700; color: #d0c8f0; margin-bottom: 6px; }
-    .mut-divider { height: 1px; background: #2a2245; margin: 2px 0; }
+    .mut-panel-title { font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .mut-slime-name { font-size: 14px; font-weight: 700; color: #d0c8f0; }
+    .mut-divider { height: 1px; background: #2a2245; }
 
     .mut-tags { display: flex; flex-direction: column; gap: 7px; }
     .mut-tag {
@@ -284,7 +269,7 @@
     .stat-preview-rarity { font-size: 10px; color: #7060a0; margin-top: 2px; }
 
     .apply-btn {
-      margin-top: 4px; padding: 10px; border-radius: 10px;
+      margin-top: 2px; padding: 10px; border-radius: 10px;
       border: 1.5px solid #5040a0; background: rgba(80,50,160,0.2);
       color: #c0b0f0; font-size: 13px; font-weight: 700;
       cursor: pointer; font-family: inherit; transition: all 0.12s;
@@ -370,10 +355,10 @@
             <span class="mut-preview" id="mut-preview"></span>
             <div class="mut-level-row">
               <span class="mut-level-label">Level</span>
-              <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="250" value="1" oninput="OnPendingLevelChange()" />
+              <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="9999" value="1" oninput="OnPendingLevelChange()" />
             </div>
             <div class="mut-divider"></div>
-            <div class="stat-preview" id="stat-preview">
+            <div class="stat-preview">
               <span class="stat-preview-title">Preview</span>
               <span class="stat-preview-row" id="preview-atk">💪 ATK —</span>
               <span class="stat-preview-row" id="preview-hp">❤️ HP —</span>
@@ -404,7 +389,7 @@
     };
 
     const RARITY_MULTIS = {
-       "": 1,
+      "": 1,
       "Big": 100,
       "Shiny": 250,
       "Huge": 1000,
@@ -416,60 +401,62 @@
       "Huge Inverted": 2500000,
       "Shiny Big Inverted": 62500000,
       "Shiny Huge Inverted": 625000000,
-    }
-    
+    };
+
     const slimes = [
       /* Basics */
-      { name: "Goopy", tier: "Basic", color: "#aaaaaa", BaseATK: 4, BaseHP: 10, BaseRarity: 3 },
-      { name: "Sunset", tier: "Basic", color: "#aaaaaa", BaseATK: 5, BaseHP: 15, BaseRarity: 5 },
+      { name: "Goopy",        tier: "Basic",        color: "#aaaaaa", BaseATK: 4,   BaseHP: 10,   BaseRarity: 3        },
+      { name: "Sunset",       tier: "Basic",        color: "#aaaaaa", BaseATK: 5,   BaseHP: 15,   BaseRarity: 5        },
       /* Commons */
-      { name: "Fin", tier: "Common", color: "#a6ff8b", BaseATK: 6, BaseHP: 20, BaseRarity: 8 },
-      { name: "Leafy", tier: "Common", color: "#a6ff8b", BaseATK: 7, BaseHP: 22, BaseRarity: 11 },
+      { name: "Fin",          tier: "Common",       color: "#a6ff8b", BaseATK: 6,   BaseHP: 20,   BaseRarity: 8        },
+      { name: "Leafy",        tier: "Common",       color: "#a6ff8b", BaseATK: 7,   BaseHP: 22,   BaseRarity: 11       },
       /* Uncommons */
-      { name: "Meow", tier: "Uncommon", color: "#98f0be", BaseATK: 8, BaseHP: 27, BaseRarity: 35 },
-      { name: "Glo", tier: "Uncommon", color: "#98f0be", BaseATK: 10, BaseHP: 30, BaseRarity: 57 },
+      { name: "Meow",         tier: "Uncommon",     color: "#98f0be", BaseATK: 8,   BaseHP: 27,   BaseRarity: 35       },
+      { name: "Glo",          tier: "Uncommon",     color: "#98f0be", BaseATK: 10,  BaseHP: 30,   BaseRarity: 57       },
       /* Rares */
-      { name: "Buggy", tier: "Rare", color: "#85d0fb", BaseATK: 13, BaseHP: 36, BaseRarity: 103 },
-      { name: "Boomy", tier: "Rare", color: "#85d0fb", BaseATK: 15, BaseHP: 43, BaseRarity: 160 },
-      { name: "Brutis", tier: "Rare", color: "#85d0fb", BaseATK: 18, BaseHP: 50, BaseRarity: 263 },
-      { name: "Frankenslime", tier: "Rare", color: "#85d0fb", BaseATK: 20, BaseHP: 60, BaseRarity: 415 },
+      { name: "Buggy",        tier: "Rare",         color: "#85d0fb", BaseATK: 13,  BaseHP: 36,   BaseRarity: 103      },
+      { name: "Boomy",        tier: "Rare",         color: "#85d0fb", BaseATK: 15,  BaseHP: 43,   BaseRarity: 160      },
+      { name: "Brutis",       tier: "Rare",         color: "#85d0fb", BaseATK: 18,  BaseHP: 50,   BaseRarity: 263      },
+      { name: "Frankenslime", tier: "Rare",         color: "#85d0fb", BaseATK: 20,  BaseHP: 60,   BaseRarity: 415      },
       /* Epics */
-      { name: "Orca", tier: "Epic", color: "#ba85ff", BaseATK: 25, BaseHP: 72, BaseRarity: 719 },
-      { name: "Spike", tier: "Epic", color: "#ba85ff", BaseATK: 29, BaseHP: 88, BaseRarity: 1260 },
-      { name: "Axolotl", tier: "Epic", color: "#ba85ff", BaseATK: 36, BaseHP: 105, BaseRarity: 2390 },
+      { name: "Orca",         tier: "Epic",         color: "#ba85ff", BaseATK: 25,  BaseHP: 72,   BaseRarity: 719      },
+      { name: "Spike",        tier: "Epic",         color: "#ba85ff", BaseATK: 29,  BaseHP: 88,   BaseRarity: 1260     },
+      { name: "Axolotl",      tier: "Epic",         color: "#ba85ff", BaseATK: 36,  BaseHP: 105,  BaseRarity: 2390     },
       /* Legendaries */
-      { name: "Spidey", tier: "Legendary", color: "#ffac7b", BaseATK: 43, BaseHP: 121, BaseRarity: 4270 },
-      { name: "Mushy", tier: "Legendary", color: "#ffac7b", BaseATK: 50, BaseHP: 148, BaseRarity: 7777 },
-      { name: "Rocky", tier: "Legendary", color: "#ffac7b", BaseATK: 58, BaseHP: 176, BaseRarity: 13900 },
+      { name: "Spidey",       tier: "Legendary",    color: "#ffac7b", BaseATK: 43,  BaseHP: 121,  BaseRarity: 4270     },
+      { name: "Mushy",        tier: "Legendary",    color: "#ffac7b", BaseATK: 50,  BaseHP: 148,  BaseRarity: 7770     },
+      { name: "Rocky",        tier: "Legendary",    color: "#ffac7b", BaseATK: 58,  BaseHP: 176,  BaseRarity: 13900    },
       /* Mythics */
-      { name: "Lucky", tier: "Mythic", color: "#ff87bf", BaseATK: 67, BaseHP: 200, BaseRarity: 21500 },
-      { name: "Stump", tier: "Mythic", color: "#ff87bf", BaseATK: 75, BaseHP: 232, BaseRarity: 35900 },
-      { name: "Lily", tier: "Mythic", color: "#ff87bf", BaseATK: 85, BaseHP: 256, BaseRarity: 53800 },
-      { name: "Crafty", tier: "Mythic", color: "#ff87bf", BaseATK: 90, BaseHP: 270, BaseRarity: 57400 },
+      { name: "Lucky",        tier: "Mythic",       color: "#ff87bf", BaseATK: 67,  BaseHP: 200,  BaseRarity: 21500    },
+      { name: "Stump",        tier: "Mythic",       color: "#ff87bf", BaseATK: 75,  BaseHP: 232,  BaseRarity: 35900    },
+      { name: "Lily",         tier: "Mythic",       color: "#ff87bf", BaseATK: 85,  BaseHP: 256,  BaseRarity: 53800    },
+      { name: "Crafty",       tier: "Mythic",       color: "#ff87bf", BaseATK: 90,  BaseHP: 270,  BaseRarity: 57400    },
       /* Divines */
-      { name: "Icy", tier: "Divine", color: "#fee989", BaseATK: 96, BaseHP: 290, BaseRarity: 86100 },
-      { name: "Orbit", tier: "Divine", color: "#fee989", BaseATK: 115, BaseHP: 344, BaseRarity: 126000 },
-      { name: "Aegis", tier: "Divine", color: "#fee989", BaseATK: 138, BaseHP: 414, BaseRarity: 215000 },
-      { name: "Wicked", tier: "Divine", color: "#fee989", BaseATK: 166, BaseHP: 496, BaseRarity: 326000 },
-      { name: "Thorn", tier: "Divine", color: "#fee989", BaseATK: 167, BaseHP: 500, BaseRarity: 330000 },
+      { name: "Icy",          tier: "Divine",       color: "#fee989", BaseATK: 96,  BaseHP: 290,  BaseRarity: 86100    },
+      { name: "Orbit",        tier: "Divine",       color: "#fee989", BaseATK: 115, BaseHP: 344,  BaseRarity: 126000   },
+      { name: "Aegis",        tier: "Divine",       color: "#fee989", BaseATK: 138, BaseHP: 414,  BaseRarity: 215000   },
+      { name: "Wicked",       tier: "Divine",       color: "#fee989", BaseATK: 166, BaseHP: 496,  BaseRarity: 326000   },
+      { name: "Thorn",        tier: "Divine",       color: "#fee989", BaseATK: 167, BaseHP: 500,  BaseRarity: 330000   },
       /* Prismatics */
-      { name: "King", tier: "Prismatic", color: "#5dfbcb", BaseATK: 189, BaseHP: 567, BaseRarity: 538000 },
-      { name: "Guest", tier: "Prismatic", color: "#5dfbcb", BaseATK: 208, BaseHP: 624, BaseRarity: 861000 },
-      { name: "Ninja", tier: "Prismatic", color: "#5dfbcb", BaseATK: 230, BaseHP: 690, BaseRarity: 1260000 },
-      { name: "Buzz", tier: "Prismatic", color: "#5dfbcb", BaseATK: 270, BaseHP: 810, BaseRarity: 2150000 },
-      { name: "Stormy", tier: "Prismatic", color: "#5dfbcb", BaseATK: 291, BaseHP: 870, BaseRarity: 3070000 },
-      { name: "Geode", tier: "Prismatic", color: "#5dfbcb", BaseATK: 300, BaseHP: 900, BaseRarity: 3110000 },
+      { name: "King",         tier: "Prismatic",    color: "#5dfbcb", BaseATK: 189, BaseHP: 567,  BaseRarity: 538000   },
+      { name: "Guest",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 208, BaseHP: 624,  BaseRarity: 861000   },
+      { name: "Ninja",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 230, BaseHP: 690,  BaseRarity: 1260000  },
+      { name: "Buzz",         tier: "Prismatic",    color: "#5dfbcb", BaseATK: 270, BaseHP: 810,  BaseRarity: 2150000  },
+      { name: "Stormy",       tier: "Prismatic",    color: "#5dfbcb", BaseATK: 291, BaseHP: 870,  BaseRarity: 3070000  },
+      { name: "Geode",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 300, BaseHP: 900,  BaseRarity: 3110000  },
     ];
 
-    const MUT_ORDER = ["Shiny", "Big", "Huge", "Inverted"];
+    const MUT_ORDER  = ["Shiny", "Big", "Huge", "Inverted"];
     const SIZE_GROUP = new Set(["Big", "Huge"]);
 
-    let MaxSlots = 1;
+    let MaxSlots        = 1;
     let ActiveSlotIndex = null;
-    let PendingSlime = null;
+    let PendingSlime    = null;
     let ActiveMutations = new Set();
 
     const SlotData = Array(8).fill(null);
+
+    // ── Mutation helpers ──────────────────────────────────────────────────────
 
     function OrderedMutations(MutSet) {
       return MUT_ORDER.filter(m => MutSet.has(m));
@@ -481,14 +468,14 @@
     }
 
     function GetStatMulti(MutSet) {
-      const key = MutLabel(MutSet);
-      return STAT_MULTIS[key] ?? 1;
+      return STAT_MULTIS[MutLabel(MutSet)] ?? 1;
     }
 
     function GetRarityMulti(MutSet) {
-      const key = MutLabel(MutSet);
-      return RARITY_MULTIS[key] ?? 1;
+      return RARITY_MULTIS[MutLabel(MutSet)] ?? 1;
     }
+
+    // ── Stat formulas (matching reference: atk uses BaseATK, hp uses BaseHP) ─
 
     function CalcATK(slime, MutSet, level) {
       const multi = GetStatMulti(MutSet);
@@ -504,8 +491,10 @@
       return slime.BaseRarity * GetRarityMulti(MutSet);
     }
 
+    // ── Formatting ────────────────────────────────────────────────────────────
+
     function FormatNum(n) {
-      if (n >= 1e18) return (n / 1e15).toFixed(2).replace(/\.?0+$/, '') + 'Qn';
+      if (n >= 1e18) return (n / 1e18).toFixed(2).replace(/\.?0+$/, '') + 'Qn';
       if (n >= 1e15) return (n / 1e15).toFixed(2).replace(/\.?0+$/, '') + 'Qd';
       if (n >= 1e12) return (n / 1e12).toFixed(2).replace(/\.?0+$/, '') + 'T';
       if (n >= 1e9)  return (n / 1e9 ).toFixed(2).replace(/\.?0+$/, '') + 'B';
@@ -515,8 +504,17 @@
     }
 
     function FormatRarity(n) {
-      return '1 / ' + FormatNum(n)
+      return '1 / ' + FormatNum(n);
     }
+
+    // ── Level helper — single source of truth, reads DOM directly ─────────────
+
+    function GetPendingLevel() {
+      const val = parseInt(document.getElementById('pending-level-input').value) || 1;
+      return Math.max(1, Math.min(9999, val));
+    }
+
+    // ── Fuzzy search ──────────────────────────────────────────────────────────
 
     function FuzzyScore(query, target) {
       query = query.toLowerCase(); target = target.toLowerCase();
@@ -528,18 +526,16 @@
       return qi === query.length ? score : -1;
     }
 
+    // ── Level input handler ───────────────────────────────────────────────────
+
     function OnPendingLevelChange() {
       if (PendingSlime) UpdateStatPreview();
     }
 
-    function GetPendingLevel() {
-      const val = parseInt(document.getElementById('pending-level-input').value || 1;
-      return Math.max(1, Math.min(250, val)
-    }
+    // ── Team stats ────────────────────────────────────────────────────────────
 
     function UpdateTeamStats() {
-      let TotalATK = 0, TotalHP = 0;
-      let HasAny = false;
+      let TotalATK = 0, TotalHP = 0, HasAny = false;
       for (let i = 0; i < MaxSlots; i++) {
         const data = SlotData[i];
         if (!data) continue;
@@ -549,8 +545,10 @@
         TotalHP  += CalcHP(data, MutSet, data.level || 1);
       }
       document.getElementById('team-total-atk').textContent = HasAny ? FormatNum(TotalATK) : '—';
-      document.getElementById('team-total-hp').textContent  = HasAny ? FormatNum(TotalHP) : '—';
+      document.getElementById('team-total-hp').textContent  = HasAny ? FormatNum(TotalHP)  : '—';
     }
+
+    // ── Slot controls ─────────────────────────────────────────────────────────
 
     function ChangeSlots(delta) {
       const prev = MaxSlots;
@@ -559,8 +557,8 @@
         for (let i = MaxSlots; i < prev; i++) SlotData[i] = null;
       }
       document.getElementById('slot-count').textContent = MaxSlots;
-      document.getElementById('btn-minus').disabled = MaxSlots <= 1;
-      document.getElementById('btn-plus').disabled = MaxSlots >= 8;
+      document.getElementById('btn-minus').disabled     = MaxSlots <= 1;
+      document.getElementById('btn-plus').disabled      = MaxSlots >= 8;
       UpdateEquippedLabel();
       RenderSlots();
       CloseInventory();
@@ -578,6 +576,8 @@
       CloseInventory();
     }
 
+    // ── Slot rendering ────────────────────────────────────────────────────────
+
     function RenderSlots() {
       const grid = document.getElementById('slots-grid');
       grid.innerHTML = '';
@@ -588,31 +588,29 @@
         if (data) {
           slot.style.borderStyle = 'solid';
           slot.style.borderColor = data.color;
-          slot.style.background = '#1a1636';
+          slot.style.background  = '#1a1636';
 
-          const MutSet = new Set(data.mutations || []);
-          const label = MutLabel(new Set(data.mutations || []));
+          const MutSet   = new Set(data.mutations || []);
+          const label    = MutLabel(MutSet);
           const FullName = label ? label + ' ' + data.name : data.name;
-          const SlotLvl = data.level || 1;
-          const atk = CalcATK(data, MutSet, SlotLvl);
-          const hp = CalcHP(data, MutSet, SlotLvl);
-          const Rarity = CalcRarity(data, MutSet)
-          
+          const SlotLvl  = data.level || 1;
+          const atk      = CalcATK(data, MutSet, SlotLvl);
+          const hp       = CalcHP(data, MutSet, SlotLvl);
+          const Rarity   = CalcRarity(data, MutSet);
+
           slot.innerHTML = `
             <span class="slot-name" style="color:${data.color}">${data.name}</span>
             <span class="slot-tier">${data.tier}</span>
             ${label ? `<span class="slot-mut">${label}</span>` : ''}
             <span class="slot-level">Lv. ${SlotLvl}</span>
             <div class="slot-tooltip">
-             <div class="tooltip-fullname">${FullName}</div>
-             <div class="tooltip-rarity">${FormatRarity(Rarity)}</div>
-             <div class="tooltip-tier" style="color: ${data.color}">${data.tier}</div>
-             
-             <div class="tooltip-divider"></div>
-             
-             <div class="tooltip-stat">💪 ${FormatNum(atk)}</div>
-             <div class="tooltip-stat">❤️ ${FormatNum(hp)}</div>
-             <div class="tooltip-level">Level ${SlotLvl}</div>
+              <div class="tooltip-fullname">${FullName}</div>
+              <div class="tooltip-rarity">${FormatRarity(Rarity)}</div>
+              <div class="tooltip-tier" style="color:${data.color}">${data.tier}</div>
+              <div class="tooltip-divider"></div>
+              <div class="tooltip-stat">💪 ${FormatNum(atk)}</div>
+              <div class="tooltip-stat">❤️ ${FormatNum(hp)}</div>
+              <div class="tooltip-level">Level ${SlotLvl}</div>
             </div>
           `;
         } else {
@@ -628,14 +626,13 @@
       UpdateTeamStats();
     }
 
+    // ── Inventory ─────────────────────────────────────────────────────────────
+
     function OpenInventory(SlotIndex) {
       ActiveSlotIndex = SlotIndex;
-      PendingSlime = null;
+      PendingSlime    = null;
       ActiveMutations.clear();
-
-      PendingLevel = SlotData[SlotIndex]?.level || 1;
-      document.getElementById('pending-level-input').value = PendingLevel;
-      
+      document.getElementById('pending-level-input').value = SlotData[SlotIndex]?.level || 1;
       const section = document.getElementById('inv-section');
       section.classList.add('open');
       document.getElementById('inv-search').value = '';
@@ -648,13 +645,13 @@
     function CloseInventory() {
       document.getElementById('inv-section').classList.remove('open');
       ActiveSlotIndex = null;
-      PendingSlime = null;
+      PendingSlime    = null;
       ActiveMutations.clear();
     }
 
     function RenderInventory() {
       const query = document.getElementById('inv-search').value.trim();
-      const grid = document.getElementById('inv-grid');
+      const grid  = document.getElementById('inv-grid');
       grid.innerHTML = '';
       let results = slimes
         .map(s => ({ slime: s, score: query ? FuzzyScore(query, s.name) : 0 }))
@@ -677,6 +674,8 @@
       });
     }
 
+    // ── Mutation panel ────────────────────────────────────────────────────────
+
     function SelectPending(slime) {
       PendingSlime = slime;
       ActiveMutations.clear();
@@ -692,12 +691,12 @@
       container.innerHTML = '';
 
       const CurrentSize = [...ActiveMutations].find(m => SIZE_GROUP.has(m)) || null;
-      const atMax = ActiveMutations.size >= 3;
+      const atMax       = ActiveMutations.size >= 3;
 
       MUT_ORDER.forEach(m => {
-        const isActive = ActiveMutations.has(m);
+        const isActive      = ActiveMutations.has(m);
         const ConflictsSize = SIZE_GROUP.has(m) && CurrentSize && CurrentSize !== m;
-        const isDisabled = (!isActive && atMax) || ConflictsSize;
+        const isDisabled    = (!isActive && atMax) || ConflictsSize;
 
         const btn = document.createElement('button');
         btn.className = 'mut-tag' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
@@ -716,24 +715,32 @@
       document.getElementById('mut-preview').textContent = preview ? preview : 'No Mutations';
     }
 
+    // ── Stat preview ──────────────────────────────────────────────────────────
+
     function UpdateStatPreview() {
-     if (!PendingSlime) return;
-      const level = GetPendingLevel();
-      const atk = CalcATK(PendingSlime, ActiveMutations, level);
-      const hp = CalcHP(PendingSlime, ActiveMutations, level);
+      if (!PendingSlime) return;
+      const level  = GetPendingLevel();
+      const atk    = CalcATK(PendingSlime, ActiveMutations, level);
+      const hp     = CalcHP(PendingSlime, ActiveMutations, level);
       const Rarity = CalcRarity(PendingSlime, ActiveMutations);
-      ...
+      document.getElementById('preview-atk').textContent    = '💪 ' + FormatNum(atk);
+      document.getElementById('preview-hp').textContent     = '❤️ ' + FormatNum(hp);
+      document.getElementById('preview-rarity').textContent = FormatRarity(Rarity);
     }
 
-   function ApplySlime() {
-    if (ActiveSlotIndex === null || !PendingSlime) return;
-     SlotData[ActiveSlotIndex] = {
-      ...PendingSlime,
-      mutations: OrderedMutations(ActiveMutations),
-      level: GetPendingLevel(),
-    };
-    ...
-  }
+    // ── Apply ─────────────────────────────────────────────────────────────────
+
+    function ApplySlime() {
+      if (ActiveSlotIndex === null || !PendingSlime) return;
+      SlotData[ActiveSlotIndex] = {
+        ...PendingSlime,
+        mutations: OrderedMutations(ActiveMutations),
+        level: GetPendingLevel(),
+      };
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
 
     ChangeSlots(0);
   </script>
