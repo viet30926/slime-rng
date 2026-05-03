@@ -492,7 +492,7 @@
 
     function CalcATK(slime, MutSet, level) {
       const multi = GetStatMulti(MutSet);
-      return Math.round((slime.BaseATK + Math.floor((level - 1) / 2)) * multi);
+      return Math.round((slime.BaseATK / 10) * (9 + level) * multi);
     }
 
     function CalcHP(slime, MutSet, level) {
