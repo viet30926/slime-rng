@@ -592,8 +592,8 @@
           const label = MutLabel(new Set(data.mutations || []));
           const FullName = label ? label + ' ' + data.name : data.name;
           const SlotLvl = data.level || 1;
-          const atk = CalcATK(data, MutSet, SlotLvl);
-          const hp = CalcHP(data, MutSet, SlotLvl);
+          const atk = CalcATK(data, MutSet, PendingLevel);
+          const hp = CalcHP(data, MutSet, PendingLevel);
           const Rarity = CalcRarity(data, MutSet)
           
           slot.innerHTML = `
