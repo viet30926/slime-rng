@@ -279,7 +279,7 @@
   <div class="content">
    <div class="section-header">
     <span class="section-title">Slime Team</span>
-    <span class="equipped-badge" id="equipped-label">0 / 1 Equipped"</span>
+    <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
    </div>
 
    <div class="controls-row">
@@ -317,10 +317,10 @@
     for (let i = 0; i < MaxSlots; i++){
      const Slot = document.createElement('div');
      Slot.className = 'Slot';
-     Slot.innerHTML = '
-      <div class="slot-plus"><span class="slot-plus-icon">+</span></div>
-      <span class="slot-label">Empty Slot</span>
-     ';
+     Slot.innerHTML = `
+        <div class="slot-plus"><span class="slot-plus-icon">+</span></div>
+        <span class="slot-label">Empty slot</span>
+      `;
       grid.appendChild(Slot);
     }
    }
