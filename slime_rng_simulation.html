@@ -574,8 +574,8 @@
           const label = MutLabel(new Set(data.mutations || []));
           const FullName = label ? label + ' ' + data.name : data.name;
           const SlotLvl = data.level || 1;
-          const atk = CalcATK(data, MutSet, PendingLevel);
-          const hp = CalcHP(data, MutSet, PendingLevel);
+          const atk = CalcATK(data, MutSet, SlotLvl);
+          const hp = CalcHP(data, MutSet, SlotLvl);
           const Rarity = CalcRarity(data, MutSet)
           
           slot.innerHTML = `
@@ -698,8 +698,8 @@
 
     function UpdateStatPreview() {
       if (!PendingSlime) return;
-      const atk = CalcATK(PendingSlime, ActiveMutations, PendingLevel);
-      const hp = CalcHP(PendingSlime, ActiveMutations, PendingLevel);
+      const atk = CalcATK(PendingSlime, ActiveMutations, SlotLvl);
+      const hp = CalcHP(PendingSlime, ActiveMutations, SlotLvl);
       const Rarity = CalcRarity(PendingSlime, ActiveMutations);
       document.getElementById('preview-atk').textContent = '💪 ' + FormatNum(atk);
       document.getElementById('preview-hp').textContent = '❤️ ' + FormatNum(hp);
