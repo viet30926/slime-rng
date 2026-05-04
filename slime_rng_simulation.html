@@ -355,7 +355,7 @@
             <span class="mut-preview" id="mut-preview"></span>
             <div class="mut-level-row">
               <span class="mut-level-label">Level</span>
-              <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="9999" value="1" oninput="OnPendingLevelChange()" />
+              <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="250" value="1" oninput="OnPendingLevelChange()" />
             </div>
             <div class="mut-divider"></div>
             <div class="stat-preview">
@@ -466,6 +466,14 @@
       { name: "Ember",       tier: "Secret",       color: "#ff4a4a", BaseATK: 3740,  BaseHP: 11200,  BaseRarity: 1720000000    },
       { name: "Astro",       tier: "Secret",       color: "#ff4a4a", BaseATK: 4100,  BaseHP: 12300,  BaseRarity: 2470000000    },
       { name: "Pumpkin",       tier: "Secret",       color: "#ff4a4a", BaseATK: 4490,  BaseHP: 13500,  BaseRarity: 2770000000    },
+      /* Celestials */
+      { name: "Ouchy",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 5400,  BaseHP: 16200,  BaseRarity: 4390000000    },
+      { name: "Sharky",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 6500,  BaseHP: 19400,  BaseRarity: 6470000000    },
+      { name: "Dino",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 7800,  BaseHP: 23400,  BaseRarity: 10100000000    },
+      { name: "Sunny",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 8100,  BaseHP: 24300,  BaseRarity: 11800000000    },
+      { name: "Monke",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 9360,  BaseHP: 28000,  BaseRarity: 15300000000    },
+      { name: "Prickly",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 11200,  BaseHP: 33700,  BaseRarity: 23900000000    },
+      { name: "Zoomy",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 13400,  BaseHP: 40300,  BaseRarity: 34200000000    },
     ];
 
     const MUT_ORDER  = ["Shiny", "Big", "Huge", "Inverted"];
@@ -533,7 +541,7 @@
 
     function GetPendingLevel() {
       const val = parseInt(document.getElementById('pending-level-input').value) || 1;
-      return Math.max(1, Math.min(9999, val));
+      return Math.max(1, Math.min(250, val));
     }
 
     // ── Fuzzy search ──────────────────────────────────────────────────────────
