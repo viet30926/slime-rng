@@ -34,7 +34,9 @@
     .orb1 { width: 320px; height: 320px; background: #6040d0; top: -80px; left: -60px; }
     .orb2 { width: 240px; height: 240px; background: #a040c0; top: -40px; right: -40px; }
 
+    /* --- Header --- */
     .header { display: flex; align-items: center; gap: 14px; position: relative; z-index: 1; }
+    .header-left { display: flex; align-items: center; gap: 14px; }
     .title-block { display: flex; flex-direction: column; gap: 2px; }
     .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #7060b0; }
     .title {
@@ -51,6 +53,12 @@
     @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
     .beta-text { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #b090f0; }
 
+    /* --- Disclaimer text in header --- */
+    .header-disclaimer {
+      font-size: 10px; color: #4a3860; font-style: italic;
+      ltter-spacing: 0.02em; text-align: right; max-width: 180px; line-height: 1.4;
+    }
+    
     .divider-line {
       margin-top: 1.75rem; height: 1px;
       background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
@@ -59,6 +67,80 @@
 
     .content { position: relative; z-index: 1; margin-top: 1.75rem; }
 
+    /* --- Home Page --- */
+    .home-page { display: block; }
+    .home-hero {
+      text-align: center; padding: 1.5rem 1rem 2rem;
+    }
+    .home-title {
+      font-size: 22px; font-weight: 800; color: #d0c8f0;
+      letter-spacing: -0.3px; margin-bottom: 0.75rem;
+    }
+    .home-title span {
+      background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+      background-clip: text;
+    }
+    .home-desc {
+      font-size: 13px; color: #5a5080; line-height: 1.7;
+      max-width: 5060px; margin: 0 auto 0.5rem;
+    }
+    .home-subdesc {
+      font-size: 11px; color: #3a3060; margin-top: 0.4rem;
+    }
+
+    /* --- Breadcrumb nav --- */
+    .breadcrumb-section {
+      margin-top: 2rem;
+    }
+    .breadcrumb-label {
+      font-size: 10px; font-weight: 700; color: #4a4070;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .breadcrumb-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, mixmax(180px, 1fr));
+      gap: 10px;
+    }
+    .breadcrumb-btn {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 1rem 1.1rem; border-radius: 14px;
+      border: 1.5px solid #2a2245; background: #18162c;
+      cursor: pointer; text-align: left; font-family: inherit;
+      transition: all 0.15s; position: relative; overflow: hidden;
+    }
+    .breadcrumb-btn:hover { border-color: #5040a0; background: #201e38; }
+    .breadcrumb-btn.active { border-color: #7060c0; background: #221e42; }
+    .breadcrumb-btn-icon { font-size: 20px; line-height: 1; }
+    .breadcrumb-btn-name { font-size: 13px; font-weight: 700; color: #d0c8f0; }
+    .breadcrumb-btn-desc { font-size: 10px; color: #4a4070; line-height: 1.4; }
+    .breadcrumb-btn-soon {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 9px; font-weight: 700; color: #4a3860;
+      background: rgba(80, 50, 120, 0.15); border: 1px solid #2a2248;
+      border-radius: 999px; padding: 2px 8px; letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* --- Feature page wrapper --- */
+    .feature-page { display: none; }
+    .feature-page.active { display: block; }
+
+    /* --- Back breadcrumb bar --- */
+    .back-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: #5a5080;
+      background: none; border: 1px solid #2a2245; border-radius: 999px;
+      padding: 4px 12px; cursor: pointer; font-family: inherit; transition: all 0.12s
+    }
+    .back-btn:hover { color: #a090d0; border-color: #4a3880; background: rgba(80, 50, 120, 0.1); }
+    .back-crumb { font-size: 11px; color: #3a3060; }
+    .back-crumb-sep { font-size: 11px; color: #2a2245; }
+    .back-crumb-current { font-size: 11px; color: #7060c0; font-weight: 600; }
+
+    /* --- Section header --- */
     .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
     .section-title { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
     .section-header-right { display: flex; align-items: center; gap: 10px; }
@@ -75,6 +157,7 @@
     }
     .clear-btn:hover { color: #e06070; border-color: #8a3050; background: rgba(160, 40, 70, 0.2); }
 
+    /* --- Controls --- */
     .controls-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
     .ctrl-label { font-size: 12px; color: #5a5080; white-space: nowrap; }
     .ctrl-btn {
@@ -87,6 +170,7 @@
     .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
     .ctrl-count { font-size: 14px; font-weight: 700; color: #c0b0f0; min-width: 20px; text-align: center; }
 
+    /* --- Team stats panel --- */
     .team-stats-panel {
       position: relative; overflow: hidden;
       background: #13112a; border: 1.5px solid #2a2245;
@@ -119,8 +203,8 @@
     }
     .team-stat-icon { font-size: 11px; color: #4a4070; margin-bottom: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
 
+    /* --- Slots --- */
     .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
-
     .slot {
       aspect-ratio: 1; border-radius: 14px; border: 1.5px dashed #2e2448;
       background: #15132a; display: flex; flex-direction: column;
@@ -144,6 +228,7 @@
     .slot-mut { font-size: 8px; color: #8070b0; text-align: center; line-height: 1.4; }
     .slot-level { font-size: 9px; color: #4a4070; text-align: center; margin-top: 1px; }
 
+    /* --- Slot tooltip --- */
     .slot-tooltip {
       display: none; position: absolute;
       bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
@@ -160,21 +245,19 @@
     .tooltip-stat { font-size: 12px; font-weight: 600; color: #d0c8f0; margin-bottom: 3px; }
     .tooltip-level { font-size: 10px; color: #5a5080; margin-top: 4px; }
 
+    /* --- Inventory --- */
     .inv-divider {
       margin-top: 2rem; height: 1px;
       background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
     }
-
     .inv-section {
       overflow: hidden; max-height: 0; opacity: 0;
       transition: max-height 0.4s ease, opacity 0.35s ease, margin-top 0.35s ease;
       margin-top: 0;
     }
     .inv-section.open { max-height: 1000px; opacity: 1; margin-top: 1.5rem; }
-
     .inv-body { display: flex; gap: 14px; align-items: flex-start; }
     .inv-left { flex: 1; min-width: 0; }
-
     .inv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
     .inv-label { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
     .inv-close-btn {
@@ -183,7 +266,6 @@
       padding: 3px 12px; cursor: pointer; font-family: inherit; transition: all 0.12s;
     }
     .inv-close-btn:hover { color: #9080c0; border-color: #4a3880; background: rgba(80,50,120,0.15); }
-
     .inv-search {
       width: 100%; padding: 10px 14px; background: #1a1828;
       border: 1.5px solid #2a2245; border-radius: 10px;
@@ -192,7 +274,6 @@
     }
     .inv-search::placeholder { color: #3a3460; }
     .inv-search:focus { border-color: #5a50a0; }
-
     .inv-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
       gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 4px;
@@ -200,7 +281,6 @@
     .inv-grid::-webkit-scrollbar { width: 5px; }
     .inv-grid::-webkit-scrollbar-track { background: transparent; }
     .inv-grid::-webkit-scrollbar-thumb { background: #2e2448; border-radius: 3px; }
-
     .inv-card {
       border-radius: 12px; border: 1.5px solid #2a2245;
       background: #18162c; padding: 14px 10px 12px;
@@ -213,6 +293,7 @@
     .inv-card-tier { font-size: 10px; font-weight: 500; }
     .inv-no-results { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #2e2a48; font-size: 13px; }
 
+    /* --- Mutation panel --- */
     .mut-panel {
       width: 210px; flex-shrink: 0;
       background: #13112a; border: 1.5px solid #2a2245;
@@ -223,11 +304,9 @@
       pointer-events: none;
     }
     .mut-panel.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
-
     .mut-panel-title { font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase; }
     .mut-slime-name { font-size: 14px; font-weight: 700; color: #d0c8f0; }
     .mut-divider { height: 1px; background: #2a2245; }
-
     .mut-tags { display: flex; flex-direction: column; gap: 7px; }
     .mut-tag {
       padding: 8px 12px; border-radius: 8px; border: 1.5px solid #2a2245;
@@ -238,12 +317,12 @@
     .mut-tag:hover { border-color: #4a3880; color: #a090d0; background: #201e38; }
     .mut-tag.active { border-color: #7060c0; background: #221e42; color: #c0b0f0; }
     .mut-tag.disabled { opacity: 0.25; cursor: not-allowed; }
-
     .mut-preview {
       font-size: 10px; color: #5a5080; min-height: 14px;
       font-style: italic; letter-spacing: 0.03em;
     }
 
+    /* --- Level row in the mut panel --- */
     .mut-level-row {
       display: flex; align-items: center; justify-content: space-between;
       background: #0f0e1a; border: 1px solid #2a2245;
@@ -259,6 +338,7 @@
     }
     .mut-level-input:focus { border-color: #5040a0; }
 
+    /* --- Stat Preview --- */
     .stat-preview {
       background: #0f0e1a; border: 1px solid #2a2245;
       border-radius: 10px; padding: 10px 12px;
@@ -268,6 +348,7 @@
     .stat-preview-row { font-size: 12px; font-weight: 600; color: #c0b0f0; }
     .stat-preview-rarity { font-size: 10px; color: #7060a0; margin-top: 2px; }
 
+    /* --- Apply button --- */
     .apply-btn {
       margin-top: 2px; padding: 10px; border-radius: 10px;
       border: 1.5px solid #5040a0; background: rgba(80,50,160,0.2);
@@ -283,96 +364,154 @@
     <div class="bg-orb orb1"></div>
     <div class="bg-orb orb2"></div>
 
+    <!-- Header -->
     <div class="header">
-      <div style="display:flex;align-items:center;gap:14px;">
-        <div class="title-block">
-          <span class="eyebrow">Simulate Slime Teams, Stats &amp; More!</span>
-          <span class="title">Slime RNG Simulation</span>
-        </div>
-        <div class="beta-tag">
-          <div class="beta-dot"></div>
-          <span class="beta-text">Beta</span>
-        </div>
-      </div>
+     <div class="header-left">
+       <div class="title-block">
+         <span class="eyebrow">Simulate Slime Teams, Stats &amp; More!</span>
+         <span class="title">Slime RNG Simulation</span>
+       </div>
+       <div class="beta-tag">
+         <div class="beta-dot"></div>
+         <span class="beta-text">Beta</span>
+       </div>
+     </div>
+      <span class="header-disclaimer">Not All Chances Are Accurate For All Slimes</span>
     </div>
 
     <div class="divider-line"></div>
 
     <div class="content">
-      <div class="section-header">
-        <span class="section-title">Slime Team</span>
-        <div class="section-header-right">
-          <button class="clear-btn" onclick="ClearTeam()">✕ Clear Team</button>
-          <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
+      <!-- Home page -->
+      <div class="home-page" id="home-page">
+        <div class="home-hero">
+          <div class="home-title">Your <span>Slime RNG</span> Simulation Toolkit</div>
+          <p class="home-desc">
+            A simulation tool for Slime RNG on Roblox. This site will have multiple features that you can simulate such as your slime team (or any slime team that you wish to simulate), compare slime stats, calculate total luck based on various factors, calculate the amount of food needed to feed a slime to a set level that you may want, and more!
+          </p>
+          <p class="home-subdesc">Select a feature below to get started."</p>
+        </div>
+        <!-- Breadcrumb feature buttons -->
+        <div class="breadcrumb-section">
+          <div class="breadcrumb-label">Features</div>
+          <div class="breadcrumb-grid">
+            <!-- Slime Team breadcrumb -->
+            <button class="breadcrumb-btn" onclick="NavigateTo('slime-team')">
+              <span class="breadcrumb-btn-icon">🛡️</span>
+              <span class="breadcrumb-btn-name">Slime Team</span>
+              <span class="breadcrumb-btn-desc">Build a simulated team, set mutations &amp; levels, and view combined stats.</span>
+            </button>
+            <!-- Coming soon placeholders will be here -->
+            <button class="breadcrumb-btn" disabled style="opacity: 0.45; cursor: not-allowed;">
+              <span class="breadcrumb-btn-soon=">Soon</span>
+              <span class="breadcrumb-btn-icon">🍀</span>
+              <span class="breadcrumb-btn-name">Luck Calculator</span>
+              <span class="breadcrumb-btn-desc">Combine all the luck factors that boost your luck to view overall luck.</span>
+            </button>
+            <button class="breadcrumb-btn" disabled style="opacity: 0.45; cursor: not-allowed;">
+              <span class="breadcrumb-btn-soon=">Soon</span>
+              <span class="breadcrumb-btn-icon">🧐</span>
+              <span class="breadcrumb-btn-name">Compare Slime Stats</span>
+              <span class="breadcrumb-btn-desc">Side by side stat comparison between 2 slimes with any mutations.</span>
+            </button>
+            <button class="breadcrumb-btn" disabled style="opacity: 0.45; cursor: not-allowed;">
+              <span class="breadcrumb-btn-soon=">Soon</span>
+              <span class="breadcrumb-btn-icon">🍴</span>
+              <span class="breadcrumb-btn-name">Food Calculator</span>
+              <span class="breadcrumb-btn-desc">Find out exactly how much food you need to reach your target level for a slime.</span>
+            </button>
+          </div>
         </div>
       </div>
+      <!-- End home page -->
 
-      <div class="team-stats-panel">
-        <div class="team-stats-orb team-stats-orb-1"></div>
-        <div class="team-stats-orb team-stats-orb-2"></div>
-        <div class="team-stats-left">
-          <div class="team-stats-title">Overall Team Stats</div>
-          <div class="team-stats-subtitle">Combined Across All Equipped Slimes</div>
+      <!-- Slime team feature page -->
+      <div class="feature page" id="page-slime-team">
+        <div class="back-bar">
+          <button class="back-btn" onclick="NavigateTo('home')">← Home</button>
+          <span class="back-crumb">Home</span>
+          <span class="back-crumb-sep">›</span>
+          <span class="back-crumb-current">Slime Team</span>
         </div>
-        <div class="team-stats-values">
-          <div class="team-stat-block">
-            <div class="team-stat-icon">💪 Total ATK</div>
-            <div class="team-stat-value atk" id="team-total-atk">—</div>
-          </div>
-          <div class="team-stat-block">
-            <div class="team-stat-icon">❤️ Total HP</div>
-            <div class="team-stat-value hp" id="team-total-hp">—</div>
+        <!-- Section header -->
+        <div class="section-header">
+          <span class="section-title">Slime Team</span>
+          <div class="section-header-right">
+            <button class="clear-btn" onclick="ClearTeam()">✕ Clear Team</button>
+            <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
           </div>
         </div>
-      </div>
-
-      <div class="controls-row">
-        <span class="ctrl-label">Max Slots</span>
-        <button class="ctrl-btn" id="btn-minus" onclick="ChangeSlots(-1)">−</button>
-        <span class="ctrl-count" id="slot-count">1</span>
-        <button class="ctrl-btn" id="btn-plus" onclick="ChangeSlots(1)">+</button>
-      </div>
-
-      <div class="slots-grid" id="slots-grid"></div>
-
-      <div class="inv-divider"></div>
-
-      <div class="inv-section" id="inv-section">
-        <div class="inv-header">
-          <span class="inv-label">Inventory — Select a Slime</span>
-          <button class="inv-close-btn" onclick="CloseInventory()">✕ Close</button>
-        </div>
-        <div class="inv-body">
-          <div class="inv-left">
-            <input type="text" class="inv-search" id="inv-search" placeholder="Search Slimes..." oninput="RenderInventory()" />
-            <div class="inv-grid" id="inv-grid"></div>
+        <!-- Team stats panel -->
+        <div class="team-stats-panel">
+          <div class="team-stats-orb team-stats-orb-1"></div>
+          <div class="team-stats-orb team-stats-orb-2"></div>
+          <div class="team-stats-left">
+            <div class="team-stats-title">Overall Team Stats</div>
+            <div class="team-stats-subtitle">Combined Across All Equipped Slimes</div>
           </div>
-          <div class="mut-panel" id="mut-panel">
-            <span class="mut-panel-title">Mutations</span>
-            <span class="mut-slime-name" id="mut-slime-name">—</span>
-            <div class="mut-divider"></div>
-            <div class="mut-tags" id="mut-tags"></div>
-            <span class="mut-preview" id="mut-preview"></span>
-            <div class="mut-level-row">
-              <span class="mut-level-label">Level</span>
-              <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="250" value="1" oninput="OnPendingLevelChange()" />
+          <div class="team-stats-values">
+            <div class="team-stat-block">
+              <div class="team-stat-icon">💪 Total ATK</div>
+              <div class="team-stat-value atk" id="team-total-atk">—</div>
             </div>
-            <div class="mut-divider"></div>
-            <div class="stat-preview">
-              <span class="stat-preview-title">Preview</span>
-              <span class="stat-preview-row" id="preview-atk">💪 ATK —</span>
-              <span class="stat-preview-row" id="preview-hp">❤️ HP —</span>
+            <div class="team-stat-block">
+              <div class="team-stat-icon">❤️ Total HP</div>
+              <div class="team-stat-value hp" id="team-total-hp">—</div>
+            </div>
+          </div>
+        </div>
+        <!-- Controls -->
+        <div class="controls-row">
+          <span class="ctrl-label">Max Slots</span>
+          <button class="ctrl-btn" id="btn-minus" onclick="ChangeSlots(-1)">−</button>
+          <span class="ctrl-count" id="slot-count">1</span>
+          <button class="ctrl-btn" id="btn-plus" onclick="ChangeSlots(1)">+</button>
+        </div>
+
+        <div class="slots-grid" id="slots-grid"></div>
+
+        <!-- Inventory -->
+        <div class="inv-divider"></div>
+        <div class="inv-section" id="inv-section">
+          <div class="inv-header">
+            <span class="inv-label">Inventory — Select a Slime</span>
+            <button class="inv-close-btn" onclick="CloseInventory()">✕ Close</button>
+          </div>
+          <div class="inv-body">
+            <div class="inv-left">
+              <input type="text" class="inv-search" id="inv-search" placeholder="Search Slimes..." oninput="RenderInventory()" />
+              <div class="inv-grid" id="inv-grid"></div>
+            </div>
+            <!-- Mutation panel -->
+            <div class="mut-panel" id="mut-panel">
+              <span class="mut-panel-title">Mutations</span>
+              <span class="mut-slime-name" id="mut-slime-name">—</span>
               <div class="mut-divider"></div>
-              <span class="stat-preview-rarity" id="preview-rarity">Rarity —</span>
+              <div class="mut-tags" id="mut-tags"></div>
+              <span class="mut-preview" id="mut-preview"></span>
+              <div class="mut-level-row">
+                <span class="mut-level-label">Level</span>
+                <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="250" value="1" oninput="OnPendingLevelChange()" />
+              </div>
+              <div class="mut-divider"></div>
+              <div class="stat-preview">
+                <span class="stat-preview-title">Preview</span>
+                <span class="stat-preview-row" id="preview-atk">💪 ATK —</span>
+                <span class="stat-preview-row" id="preview-hp">❤️ HP —</span>
+                <div class="mut-divider"></div>
+                <span class="stat-preview-rarity" id="preview-rarity">Rarity —</span>
+              </div>
+              <button class="apply-btn" onclick="ApplySlime()">Equip →</button>
             </div>
-            <button class="apply-btn" onclick="ApplySlime()">Equip →</button>
           </div>
         </div>
       </div>
+      <!-- End of the Slime Team feature page -->
     </div>
   </div>
 
   <script>
+    // --- Stat Multis
     const STAT_MULTIS = {
       "": 1,
       "Big": 4,
@@ -388,6 +527,7 @@
       "Shiny Huge Inverted": 780,
     };
 
+    // --- Rarity multis
     const RARITY_MULTIS = {
       "": 1,
       "Big": 100,
@@ -401,8 +541,9 @@
       "Huge Inverted": 2500000,
       "Shiny Big Inverted": 62500000,
       "Shiny Huge Inverted": 625000000,
-    };
+    }; 
 
+    // --- Slime Data
     const slimes = [
       /* Basics */
       { name: "Goopy",        tier: "Basic",        color: "#aaaaaa", BaseATK: 4,   BaseHP: 10,   BaseRarity: 3        },
@@ -487,9 +628,11 @@
       { name: "Frosty",       tier: "Nova",       color: "#db88d3", BaseATK: 57600,  BaseHP: 172000,  BaseRarity: 1070000000000    },
     ];
 
+    // --- Constants
     const MUT_ORDER  = ["Shiny", "Big", "Huge", "Inverted"];
     const SIZE_GROUP = new Set(["Big", "Huge"]);
 
+    // --- State
     let MaxSlots        = 1;
     let ActiveSlotIndex = null;
     let PendingSlime    = null;
@@ -497,7 +640,23 @@
 
     const SlotData = Array(8).fill(null);
 
-    // ── Mutation helpers ──────────────────────────────────────────────────────
+    // --- Navigation
+    function NavigateTo(PageID) {
+      const HomePage = document.getElementById('home-page');
+      const SlimeTeamPage = document.getElementById('page-slime-team');
+
+      if (PageID === 'home') {
+        HomePage.style.display = 'block';
+        SlimeTeamPage.classList.remove('active');
+        CloseInventory();
+      } else if (PageID === 'slime-team') {
+        HomePage.style.display = 'none';
+        SlimeTeamPage.classList.add('active');
+        RenderSlots();
+      }
+    }
+
+    // --- Mutation helpers
 
     function OrderedMutations(MutSet) {
       return MUT_ORDER.filter(m => MutSet.has(m));
@@ -516,7 +675,7 @@
       return RARITY_MULTIS[MutLabel(MutSet)] ?? 1;
     }
 
-    // ── Stat formulas (matching reference: atk uses BaseATK, hp uses BaseHP) ─
+    // --- Stat formulas
 
     function CalcATK(slime, MutSet, level) {
       const multi = GetStatMulti(MutSet);
@@ -532,7 +691,7 @@
       return slime.BaseRarity * GetRarityMulti(MutSet);
     }
 
-    // ── Formatting ────────────────────────────────────────────────────────────
+    // --- Formatting
 
     function FormatNum(n) {
       if (n >= 1e18) return (n / 1e18).toFixed(2).replace(/\.?0+$/, '') + 'Qn';
@@ -548,14 +707,14 @@
       return '1 / ' + FormatNum(n);
     }
 
-    // ── Level helper — single source of truth, reads DOM directly ─────────────
+    // --- Level helper
 
     function GetPendingLevel() {
       const val = parseInt(document.getElementById('pending-level-input').value) || 1;
       return Math.max(1, Math.min(250, val));
     }
 
-    // ── Fuzzy search ──────────────────────────────────────────────────────────
+    // --- Fuzzy search
 
     function FuzzyScore(query, target) {
       query = query.toLowerCase(); target = target.toLowerCase();
@@ -567,13 +726,13 @@
       return qi === query.length ? score : -1;
     }
 
-    // ── Level input handler ───────────────────────────────────────────────────
+    // --- Level input handler
 
     function OnPendingLevelChange() {
       if (PendingSlime) UpdateStatPreview();
     }
 
-    // ── Team stats ────────────────────────────────────────────────────────────
+    // --- Team stats
 
     function UpdateTeamStats() {
       let TotalATK = 0, TotalHP = 0, HasAny = false;
@@ -589,7 +748,7 @@
       document.getElementById('team-total-hp').textContent  = HasAny ? FormatNum(TotalHP)  : '—';
     }
 
-    // ── Slot controls ─────────────────────────────────────────────────────────
+    // --- Slot constrols
 
     function ChangeSlots(delta) {
       const prev = MaxSlots;
@@ -617,7 +776,7 @@
       CloseInventory();
     }
 
-    // ── Slot rendering ────────────────────────────────────────────────────────
+    // --- Slot rendering
 
     function RenderSlots() {
       const grid = document.getElementById('slots-grid');
@@ -667,7 +826,7 @@
       UpdateTeamStats();
     }
 
-    // ── Inventory ─────────────────────────────────────────────────────────────
+    // --- Inventory
 
     function OpenInventory(SlotIndex) {
       ActiveSlotIndex = SlotIndex;
@@ -715,7 +874,7 @@
       });
     }
 
-    // ── Mutation panel ────────────────────────────────────────────────────────
+    // --- Mutation panel
 
     function SelectPending(slime) {
       PendingSlime = slime;
@@ -756,7 +915,7 @@
       document.getElementById('mut-preview').textContent = preview ? preview : 'No Mutations';
     }
 
-    // ── Stat preview ──────────────────────────────────────────────────────────
+    // --- Stat preview
 
     function UpdateStatPreview() {
       if (!PendingSlime) return;
@@ -769,7 +928,7 @@
       document.getElementById('preview-rarity').textContent = FormatRarity(Rarity);
     }
 
-    // ── Apply ─────────────────────────────────────────────────────────────────
+    // --- Apply slime
 
     function ApplySlime() {
       if (ActiveSlotIndex === null || !PendingSlime) return;
@@ -782,7 +941,7 @@
       RenderSlots();
       CloseInventory();
     }
-
+    // --- Init
     ChangeSlots(0);
   </script>
 </body>
