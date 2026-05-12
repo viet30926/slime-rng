@@ -216,6 +216,7 @@
     .slot:hover .slot-plus-icon { color: #8070c0; }
     .slot-empty-label { font-size: 10px; color: #3a3060; font-weight: 500; letter-spacing: 0.06em; transition: color 0.15s; }
     .slot:hover .slot-empty-label { color: #7060b0; }
+    .slot-img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; border-radius: 8px; }
     .slot-name { font-size: 12px; font-weight: 700; text-align: center; }
     .slot-tier { font-size: 9px; color: #5a5080; text-align: center; }
     .slot-mut { font-size: 8px; color: #8070b0; text-align: center; line-height: 1.4; }
@@ -282,6 +283,7 @@
     }
     .inv-card:hover { background: #201e3a; border-color: #5040a0; }
     .inv-card.selected { border-color: #8060d0; background: #221e42; }
+    .inv-card-img { width: 52px; height: 52px; object-fit: contain; border-radius: 6px; }
     .inv-card-name { font-size: 13px; font-weight: 700; color: #d0c8f0; }
     .inv-card-tier { font-size: 10px; font-weight: 500; }
     .inv-no-results { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #2e2a48; font-size: 13px; }
@@ -913,91 +915,91 @@
     // --- Slime Data
     const slimes = [
       /* Basics */
-      { name: "Goopy",        tier: "Basic",        color: "#aaaaaa", BaseATK: 4,   BaseHP: 10,   BaseRarity: 3        },
-      { name: "Sunset",       tier: "Basic",        color: "#aaaaaa", BaseATK: 5,   BaseHP: 15,   BaseRarity: 5        },
+      { name: "Goopy",           tier: "Basic",        color: "#aaaaaa", BaseATK: 4,      BaseHP: 10,      BaseRarity: 3,              image: "Slimes/goopy.png" },
+      { name: "Sunset",          tier: "Basic",        color: "#aaaaaa", BaseATK: 5,      BaseHP: 15,      BaseRarity: 5,              image: "Slimes/sunset.png" },
       /* Commons */
-      { name: "Fin",          tier: "Common",       color: "#a6ff8b", BaseATK: 6,   BaseHP: 20,   BaseRarity: 8        },
-      { name: "Leafy",        tier: "Common",       color: "#a6ff8b", BaseATK: 7,   BaseHP: 22,   BaseRarity: 11       },
+      { name: "Fin",             tier: "Common",       color: "#a6ff8b", BaseATK: 6,      BaseHP: 20,      BaseRarity: 8,              image: "Slimes/fin.png" },
+      { name: "Leafy",           tier: "Common",       color: "#a6ff8b", BaseATK: 7,      BaseHP: 22,      BaseRarity: 11,             image: "Slimes/leafy.png" },
       /* Uncommons */
-      { name: "Meow",         tier: "Uncommon",     color: "#98f0be", BaseATK: 8,   BaseHP: 27,   BaseRarity: 35       },
-      { name: "Glo",          tier: "Uncommon",     color: "#98f0be", BaseATK: 10,  BaseHP: 30,   BaseRarity: 57       },
+      { name: "Meow",            tier: "Uncommon",     color: "#98f0be", BaseATK: 8,      BaseHP: 27,      BaseRarity: 35,             image: "Slimes/cat.png" },
+      { name: "Glo",             tier: "Uncommon",     color: "#98f0be", BaseATK: 10,     BaseHP: 30,      BaseRarity: 57,             image: "Slimes/glo.png" },
       /* Rares */
-      { name: "Buggy",        tier: "Rare",         color: "#85d0fb", BaseATK: 13,  BaseHP: 36,   BaseRarity: 103      },
-      { name: "Boomy",        tier: "Rare",         color: "#85d0fb", BaseATK: 15,  BaseHP: 43,   BaseRarity: 160      },
-      { name: "Brutis",       tier: "Rare",         color: "#85d0fb", BaseATK: 18,  BaseHP: 50,   BaseRarity: 263      },
-      { name: "Frankenslime", tier: "Rare",         color: "#85d0fb", BaseATK: 20,  BaseHP: 60,   BaseRarity: 415      },
+      { name: "Buggy",           tier: "Rare",         color: "#85d0fb", BaseATK: 13,     BaseHP: 36,      BaseRarity: 103,            image: "Slimes/buggy.png" },
+      { name: "Boomy",           tier: "Rare",         color: "#85d0fb", BaseATK: 15,     BaseHP: 43,      BaseRarity: 160,            image: "Slimes/boomy.png" },
+      { name: "Brutis",          tier: "Rare",         color: "#85d0fb", BaseATK: 18,     BaseHP: 50,      BaseRarity: 263,            image: "Slimes/brutis.png" },
+      { name: "Frankenslime",    tier: "Rare",         color: "#85d0fb", BaseATK: 20,     BaseHP: 60,      BaseRarity: 415,            image: "Slimes/frankenSlime.png" },
       /* Epics */
-      { name: "Orca",         tier: "Epic",         color: "#ba85ff", BaseATK: 25,  BaseHP: 72,   BaseRarity: 719      },
-      { name: "Spike",        tier: "Epic",         color: "#ba85ff", BaseATK: 29,  BaseHP: 88,   BaseRarity: 1260     },
-      { name: "Axolotl",      tier: "Epic",         color: "#ba85ff", BaseATK: 36,  BaseHP: 105,  BaseRarity: 2390     },
+      { name: "Orca",            tier: "Epic",         color: "#ba85ff", BaseATK: 25,     BaseHP: 72,      BaseRarity: 719,            image: "Slimes/orca.png" },
+      { name: "Spike",           tier: "Epic",         color: "#ba85ff", BaseATK: 29,     BaseHP: 88,      BaseRarity: 1260,           image: "Slimes/spike.png" },
+      { name: "Axolotl",         tier: "Epic",         color: "#ba85ff", BaseATK: 36,     BaseHP: 105,     BaseRarity: 2390,           image: "Slimes/ax.png" },
       /* Legendaries */
-      { name: "Spidey",       tier: "Legendary",    color: "#ffac7b", BaseATK: 43,  BaseHP: 121,  BaseRarity: 4270     },
-      { name: "Mushy",        tier: "Legendary",    color: "#ffac7b", BaseATK: 50,  BaseHP: 148,  BaseRarity: 7770     },
-      { name: "Rocky",        tier: "Legendary",    color: "#ffac7b", BaseATK: 58,  BaseHP: 176,  BaseRarity: 13900    },
+      { name: "Spidey",          tier: "Legendary",    color: "#ffac7b", BaseATK: 43,     BaseHP: 121,     BaseRarity: 4270,           image: "Slimes/spidey.png" },
+      { name: "Mushy",           tier: "Legendary",    color: "#ffac7b", BaseATK: 50,     BaseHP: 148,     BaseRarity: 7770,           image: "Slimes/mushy.png" },
+      { name: "Rocky",           tier: "Legendary",    color: "#ffac7b", BaseATK: 58,     BaseHP: 176,     BaseRarity: 13900,          image: "Slimes/rocky.png" },
       /* Mythics */
-      { name: "Lucky",        tier: "Mythic",       color: "#ff87bf", BaseATK: 67,  BaseHP: 200,  BaseRarity: 21500    },
-      { name: "Stump",        tier: "Mythic",       color: "#ff87bf", BaseATK: 75,  BaseHP: 232,  BaseRarity: 35900    },
-      { name: "Lily",         tier: "Mythic",       color: "#ff87bf", BaseATK: 85,  BaseHP: 256,  BaseRarity: 53800    },
-      { name: "Crafty",       tier: "Mythic",       color: "#ff87bf", BaseATK: 90,  BaseHP: 270,  BaseRarity: 57400    },
+      { name: "Lucky",           tier: "Mythic",       color: "#ff87bf", BaseATK: 67,     BaseHP: 200,     BaseRarity: 21500,          image: "Slimes/lucky.png" },
+      { name: "Stump",           tier: "Mythic",       color: "#ff87bf", BaseATK: 75,     BaseHP: 232,     BaseRarity: 35900,          image: "Slimes/stump.png" },
+      { name: "Lily",            tier: "Mythic",       color: "#ff87bf", BaseATK: 85,     BaseHP: 256,     BaseRarity: 53800,          image: "Slimes/lily.png" },
+      { name: "Crafty",          tier: "Mythic",       color: "#ff87bf", BaseATK: 90,     BaseHP: 270,     BaseRarity: 57400,          image: "Slimes/crafty.png" },
       /* Divines */
-      { name: "Icy",          tier: "Divine",       color: "#fee989", BaseATK: 96,  BaseHP: 290,  BaseRarity: 86100    },
-      { name: "Orbit",        tier: "Divine",       color: "#fee989", BaseATK: 115, BaseHP: 344,  BaseRarity: 126000   },
-      { name: "Aegis",        tier: "Divine",       color: "#fee989", BaseATK: 138, BaseHP: 414,  BaseRarity: 215000   },
-      { name: "Wicked",       tier: "Divine",       color: "#fee989", BaseATK: 166, BaseHP: 496,  BaseRarity: 326000   },
-      { name: "Thorn",        tier: "Divine",       color: "#fee989", BaseATK: 167, BaseHP: 500,  BaseRarity: 330000   },
+      { name: "Icy",             tier: "Divine",       color: "#fee989", BaseATK: 96,     BaseHP: 290,     BaseRarity: 86100,          image: "Slimes/icy.png" },
+      { name: "Orbit",           tier: "Divine",       color: "#fee989", BaseATK: 115,    BaseHP: 344,     BaseRarity: 126000,         image: "Slimes/orbit.png" },
+      { name: "Aegis",           tier: "Divine",       color: "#fee989", BaseATK: 138,    BaseHP: 414,     BaseRarity: 215000,         image: "Slimes/aegis.png" },
+      { name: "Wicked",          tier: "Divine",       color: "#fee989", BaseATK: 166,    BaseHP: 496,     BaseRarity: 326000,         image: "Slimes/wicked.png" },
+      { name: "Thorn",           tier: "Divine",       color: "#fee989", BaseATK: 167,    BaseHP: 500,     BaseRarity: 330000,         image: "Slimes/thorn.png" },
       /* Prismatics */
-      { name: "King",         tier: "Prismatic",    color: "#5dfbcb", BaseATK: 189, BaseHP: 567,  BaseRarity: 538000   },
-      { name: "Guest",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 208, BaseHP: 624,  BaseRarity: 861000   },
-      { name: "Ninja",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 230, BaseHP: 690,  BaseRarity: 1260000  },
-      { name: "Buzz",         tier: "Prismatic",    color: "#5dfbcb", BaseATK: 270, BaseHP: 810,  BaseRarity: 2150000  },
-      { name: "Stormy",       tier: "Prismatic",    color: "#5dfbcb", BaseATK: 291, BaseHP: 870,  BaseRarity: 3070000  },
-      { name: "Geode",        tier: "Prismatic",    color: "#5dfbcb", BaseATK: 300, BaseHP: 900,  BaseRarity: 3110000  },
+      { name: "King",            tier: "Prismatic",    color: "#5dfbcb", BaseATK: 189,    BaseHP: 567,     BaseRarity: 538000,         image: "Slimes/king.png" },
+      { name: "Guest",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 208,    BaseHP: 624,     BaseRarity: 861000,         image: "Slimes/guest.png" },
+      { name: "Ninja",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 230,    BaseHP: 690,     BaseRarity: 1260000,        image: "Slimes/ninja.png" },
+      { name: "Buzz",            tier: "Prismatic",    color: "#5dfbcb", BaseATK: 270,    BaseHP: 810,     BaseRarity: 2150000,        image: "Slimes/buzz.png" },
+      { name: "Stormy",          tier: "Prismatic",    color: "#5dfbcb", BaseATK: 291,    BaseHP: 870,     BaseRarity: 3070000,        image: "Slimes/stormy.png" },
+      { name: "Geode",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 300,    BaseHP: 900,     BaseRarity: 3110000,        image: "Slimes/geode.png" },
       /* Transcendents */
-      { name: "Bucky",        tier: "Transcendent",       color: "#e084ff", BaseATK: 333,  BaseHP: 999,  BaseRarity: 4780000    },
-      { name: "Pokey",        tier: "Transcendent",       color: "#e084ff", BaseATK: 371,  BaseHP: 1111,  BaseRarity: 7180000    },
-      { name: "SlimeSlime",         tier: "Transcendent",       color: "#e084ff", BaseATK: 419,  BaseHP: 1250,  BaseRarity: 10700000    },
-      { name: "Unicorn",       tier: "Transcendent",       color: "#e084ff", BaseATK: 508,  BaseHP: 1520,  BaseRarity: 17900000    },
+      { name: "Bucky",           tier: "Transcendent", color: "#e084ff", BaseATK: 333,    BaseHP: 999,     BaseRarity: 4780000,        image: "Slimes/bucky.png" },
+      { name: "Pokey",           tier: "Transcendent", color: "#e084ff", BaseATK: 371,    BaseHP: 1111,    BaseRarity: 7180000,        image: "Slimes/pokey.png" },
+      { name: "SlimeSlime",      tier: "Transcendent", color: "#e084ff", BaseATK: 419,    BaseHP: 1250,    BaseRarity: 10700000,       image: "Slimes/slimeSlime.png" },
+      { name: "Unicorn",         tier: "Transcendent", color: "#e084ff", BaseATK: 508,    BaseHP: 1520,    BaseRarity: 17900000,       image: "Slimes/unicorn.png" },
       /* Ethereals */
-      { name: "Wizzy",       tier: "Ethereal",       color: "#aadeff", BaseATK: 612,  BaseHP: 1830,  BaseRarity: 26900000    },
-      { name: "Petal",       tier: "Ethereal",       color: "#aadeff", BaseATK: 734,  BaseHP: 2300,  BaseRarity: 39100000    },
-      { name: "SlimeSlimeSlime",       tier: "Ethereal",       color: "#aadeff", BaseATK: 676,  BaseHP: 2002,  BaseRarity: 42900000    },
-      { name: "Shelly",       tier: "Ethereal",       color: "#aadeff", BaseATK: 880,  BaseHP: 2640,  BaseRarity: 61500000    },
-      { name: "Derpy",       tier: "Ethereal",       color: "#aadeff", BaseATK: 1005,  BaseHP: 3150,  BaseRarity: 89700000    },
-      { name: "Octo",       tier: "Ethereal",       color: "#aadeff", BaseATK: 1260,  BaseHP: 3780,  BaseRarity: 134000000    },
-      { name: "Puffy",       tier: "Ethereal",       color: "#aadeff", BaseATK: 1400,  BaseHP: 4200,  BaseRarity: 195000000    },
-      { name: "Halo",       tier: "Ethereal",       color: "#aadeff", BaseATK: 1510,  BaseHP: 4500,  BaseRarity: 195500000    },
+      { name: "Wizzy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 612,    BaseHP: 1830,    BaseRarity: 26900000,       image: "Slimes/wizzy.png" },
+      { name: "Petal",           tier: "Ethereal",     color: "#aadeff", BaseATK: 734,    BaseHP: 2300,    BaseRarity: 39100000,       image: "Slimes/flour.png" },
+      { name: "SlimeSlimeSlime", tier: "Ethereal",     color: "#aadeff", BaseATK: 676,    BaseHP: 2002,    BaseRarity: 42900000,       image: "Slimes/slimeSlimeSlime.png" },
+      { name: "Shelly",          tier: "Ethereal",     color: "#aadeff", BaseATK: 880,    BaseHP: 2640,    BaseRarity: 61500000,       image: "Slimes/shelly.png" },
+      { name: "Derpy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 1005,   BaseHP: 3150,    BaseRarity: 89700000,       image: "Slimes/derpy.png" },
+      { name: "Octo",            tier: "Ethereal",     color: "#aadeff", BaseATK: 1260,   BaseHP: 3780,    BaseRarity: 134000000,      image: "Slimes/otto.png" },
+      { name: "Puffy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 1400,   BaseHP: 4200,    BaseRarity: 195000000,      image: "Slimes/puffy.png" },
+      { name: "Halo",            tier: "Ethereal",     color: "#aadeff", BaseATK: 1510,   BaseHP: 4500,    BaseRarity: 195500000,      image: "Slimes/halo.png" },
       /* Secrets */
-      { name: "Bomber",       tier: "Secret",       color: "#ff4a4a", BaseATK: 1810,  BaseHP: 5430,  BaseRarity: 307000000    },
-      { name: "UFO",       tier: "Secret",       color: "#ff4a4a", BaseATK: 2170,  BaseHP: 6510,  BaseRarity: 478000000    },
-      { name: "Witchy",       tier: "Secret",       color: "#ff4a4a", BaseATK: 2600,  BaseHP: 7800,  BaseRarity: 718000000    },
-      { name: "Blackhole",       tier: "Secret",       color: "#ff4a4a", BaseATK: 3120,  BaseHP: 9360,  BaseRarity: 1070000000    },
-      { name: "Ember",       tier: "Secret",       color: "#ff4a4a", BaseATK: 3740,  BaseHP: 11200,  BaseRarity: 1720000000    },
-      { name: "Astro",       tier: "Secret",       color: "#ff4a4a", BaseATK: 4100,  BaseHP: 12300,  BaseRarity: 2470000000    },
-      { name: "Pumpkin",       tier: "Secret",       color: "#ff4a4a", BaseATK: 4490,  BaseHP: 13500,  BaseRarity: 2770000000    },
+      { name: "Bomber",          tier: "Secret",       color: "#ff4a4a", BaseATK: 1810,   BaseHP: 5430,    BaseRarity: 307000000,      image: "Slimes/bomber.png" },
+      { name: "UFO",             tier: "Secret",       color: "#ff4a4a", BaseATK: 2170,   BaseHP: 6510,    BaseRarity: 478000000,      image: "Slimes/ufo.png" },
+      { name: "Witchy",          tier: "Secret",       color: "#ff4a4a", BaseATK: 2600,   BaseHP: 7800,    BaseRarity: 718000000,      image: "Slimes/witchy.png" },
+      { name: "Blackhole",       tier: "Secret",       color: "#ff4a4a", BaseATK: 3120,   BaseHP: 9360,    BaseRarity: 1070000000,     image: "Slimes/blackHole.png" },
+      { name: "Ember",           tier: "Secret",       color: "#ff4a4a", BaseATK: 3740,   BaseHP: 11200,   BaseRarity: 1720000000,     image: "Slimes/ember.png" },
+      { name: "Astro",           tier: "Secret",       color: "#ff4a4a", BaseATK: 4100,   BaseHP: 12300,   BaseRarity: 2470000000,     image: "Slimes/astro.png" },
+      { name: "Pumpkin",         tier: "Secret",       color: "#ff4a4a", BaseATK: 4490,   BaseHP: 13500,   BaseRarity: 2770000000,     image: "Slimes/pumpkin.png" },
       /* Celestials */
-      { name: "Ouchy",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 5400,  BaseHP: 16200,  BaseRarity: 4390000000    },
-      { name: "Sharky",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 6500,  BaseHP: 19400,  BaseRarity: 6470000000    },
-      { name: "Dino",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 7800,  BaseHP: 23400,  BaseRarity: 10100000000    },
-      { name: "Sunny",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 8100,  BaseHP: 24300,  BaseRarity: 11800000000    },
-      { name: "Monke",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 9360,  BaseHP: 28000,  BaseRarity: 15300000000    },
-      { name: "Prickly",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 11200,  BaseHP: 33700,  BaseRarity: 23900000000    },
-      { name: "Zoomy",       tier: "Celestial",       color: "#b6e8ff", BaseATK: 13400,  BaseHP: 40300,  BaseRarity: 34200000000    },
+      { name: "Ouchy",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 5400,   BaseHP: 16200,   BaseRarity: 4390000000,     image: "Slimes/ouchy.png" },
+      { name: "Sharky",          tier: "Celestial",    color: "#b6e8ff", BaseATK: 6500,   BaseHP: 19400,   BaseRarity: 6470000000,     image: "Slimes/sharky.png" },
+      { name: "Dino",            tier: "Celestial",    color: "#b6e8ff", BaseATK: 7800,   BaseHP: 23400,   BaseRarity: 10100000000,    image: "Slimes/dino.png" },
+      { name: "Sunny",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 8100,   BaseHP: 24300,   BaseRarity: 11800000000,    image: "Slimes/sunny.png" },
+      { name: "Monke",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 9360,   BaseHP: 28000,   BaseRarity: 15300000000,    image: "Slimes/monke.png" },
+      { name: "Prickly",         tier: "Celestial",    color: "#b6e8ff", BaseATK: 11200,  BaseHP: 33700,   BaseRarity: 23900000000,    image: "Slimes/prickly.png" },
+      { name: "Zoomy",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 13400,  BaseHP: 40300,   BaseRarity: 34200000000,    image: "Slimes/zoomy.png" },
       /* Astrals */
-      { name: "Waxie",       tier: "Astral",       color: "#4189e0", BaseATK: 16100,  BaseHP: 48200,  BaseRarity: 50100000000    },
-      { name: "Drakey",       tier: "Astral",       color: "#4189e0", BaseATK: 19300,  BaseHP: 58000,  BaseRarity: 64700000000    },
-      { name: "Germy",       tier: "Astral",       color: "#4189e0", BaseATK: 23100,  BaseHP: 70000,  BaseRarity: 113000000000    },
-      { name: "Palmy",       tier: "Astral",       color: "#4189e0", BaseATK: 27700,  BaseHP: 83000,  BaseRarity: 172000000000    },
-      { name: "Melly",       tier: "Astral",       color: "#4189e0", BaseATK: 31000,  BaseHP: 93000,  BaseRarity: 237000000000    },
-      { name: "Snazzy",       tier: "Astral",       color: "#4189e0", BaseATK: 33200,  BaseHP: 100000,  BaseRarity: 269000000000    },
-      { name: "Bemmy",       tier: "Astral",       color: "#4189e0", BaseATK: 40000,  BaseHP: 120000,  BaseRarity: 414000000000    },
+      { name: "Waxie",           tier: "Astral",       color: "#4189e0", BaseATK: 16100,  BaseHP: 48200,   BaseRarity: 50100000000,    image: "Slimes/waxie.png" },
+      { name: "Drakey",          tier: "Astral",       color: "#4189e0", BaseATK: 19300,  BaseHP: 58000,   BaseRarity: 64700000000,    image: "Slimes/drakey.png" },
+      { name: "Germy",           tier: "Astral",       color: "#4189e0", BaseATK: 23100,  BaseHP: 70000,   BaseRarity: 113000000000,   image: "Slimes/germy.png" },
+      { name: "Palmy",           tier: "Astral",       color: "#4189e0", BaseATK: 27700,  BaseHP: 83000,   BaseRarity: 172000000000,   image: "Slimes/palmy.png" },
+      { name: "Melly",           tier: "Astral",       color: "#4189e0", BaseATK: 31000,  BaseHP: 93000,   BaseRarity: 237000000000,   image: "Slimes/melly.png" },
+      { name: "Snazzy",          tier: "Astral",       color: "#4189e0", BaseATK: 33200,  BaseHP: 100000,  BaseRarity: 269000000000,   image: "Slimes/snazzy.png" },
+      { name: "Bemmy",           tier: "Astral",       color: "#4189e0", BaseATK: 40000,  BaseHP: 120000,  BaseRarity: 414000000000,   image: "Slimes/bemmy.png" },
       /* Novas */
-      { name: "Mato",       tier: "Nova",       color: "#db88d3", BaseATK: 48000,  BaseHP: 144000,  BaseRarity: 673000000000    },
-      { name: "Frosty",       tier: "Nova",       color: "#db88d3", BaseATK: 57600,  BaseHP: 172000,  BaseRarity: 1070000000000    },
-      { name: "Pouchy",       tier: "Nova",       color: "#db88d3", BaseATK: 70000,  BaseHP: 210000,  BaseRarity: 1720000000000    },
-      { name: "Hoppity",       tier: "Nova",       color: "#db88d3", BaseATK: 84000,  BaseHP: 252000,  BaseRarity: 2690000000000    },
-      { name: "Sweetie",       tier: "Nova",       color: "#db88d3", BaseATK: 93000,  BaseHP: 279000,  BaseRarity: 3500000000000    },
-      { name: "Shady",       tier: "Nova",       color: "#db88d3", BaseATK: 100000,  BaseHP: 300000,  BaseRarity: 3990000000000    },
-      { name: "Galaxy",       tier: "Nova",       color: "#db88d3", BaseATK: 120000,  BaseHP: 360000,  BaseRarity: 6950000000000    },
+      { name: "Mato",            tier: "Nova",         color: "#db88d3", BaseATK: 48000,  BaseHP: 144000,  BaseRarity: 673000000000,   image: "Slimes/mato.png" },
+      { name: "Frosty",          tier: "Nova",         color: "#db88d3", BaseATK: 57600,  BaseHP: 172000,  BaseRarity: 1070000000000,  image: "Slimes/frosty.png" },
+      { name: "Pouchy",          tier: "Nova",         color: "#db88d3", BaseATK: 70000,  BaseHP: 210000,  BaseRarity: 1720000000000,  image: "Slimes/pouchy.png" },
+      { name: "Hoppity",         tier: "Nova",         color: "#db88d3", BaseATK: 84000,  BaseHP: 252000,  BaseRarity: 2690000000000,  image: "Slimes/hoppity.png" },
+      { name: "Sweetie",         tier: "Nova",         color: "#db88d3", BaseATK: 93000,  BaseHP: 279000,  BaseRarity: 3500000000000,  image: "Slimes/sweetie.png" },
+      { name: "Shady",           tier: "Nova",         color: "#db88d3", BaseATK: 100000, BaseHP: 300000,  BaseRarity: 3990000000000,  image: "Slimes/shady.png" },
+      { name: "Galaxy",          tier: "Nova",         color: "#db88d3", BaseATK: 120000, BaseHP: 360000,  BaseRarity: 6950000000000,  image: "Slimes/galaxy.png" },
     ];
 
     // --- Constants
@@ -1193,6 +1195,7 @@
           const Rarity   = CalcRarity(data, MutSet);
 
           slot.innerHTML = `
+            ${data.image ? `<img class="slot-img" src="${data.image}" alt="${data.name}" />` : ''}
             <span class="slot-name" style="color:${data.color}">${data.name}</span>
             <span class="slot-tier">${data.tier}</span>
             ${label ? `<span class="slot-mut">${label}</span>` : ''}
@@ -1260,6 +1263,7 @@
         const card = document.createElement('div');
         card.className = 'inv-card' + (PendingSlime && PendingSlime.name === s.name ? ' selected' : '');
         card.innerHTML = `
+          ${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}
           <span class="inv-card-name">${s.name}</span>
           <span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>
         `;
@@ -1358,7 +1362,7 @@
         const card = document.createElement('div');
         const sel  = CompareState[side].slime && CompareState[side].slime.name === s.name;
         card.className = 'inv-card' + (sel ? ' selected' : '');
-        card.innerHTML = `<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
+        card.innerHTML = `${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
         card.onclick = () => SelectCompareSlime(side, s);
         grid.appendChild(card);
       });
@@ -1664,7 +1668,7 @@
         const card = document.createElement('div');
         const sel  = FoodCalcState.slime && FoodCalcState.slime.name === s.name;
         card.className = 'inv-card' + (sel ? ' selected' : '');
-        card.innerHTML = `<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
+        card.innerHTML = `${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
         card.onclick = () => {
           FoodCalcState.slime = s;
           FoodCalcState.mutations.clear();
