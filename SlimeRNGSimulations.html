@@ -1,0 +1,1890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slime RNG Simulation</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: #09090f;
+      background-image:
+        radial-gradient(ellipse 70% 40% at 15% 0%,  rgba(80, 40, 180, 0.18) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 30% at 85% 10%, rgba(40, 160, 90,  0.10) 0%, transparent 55%),
+        radial-gradient(ellipse 60% 50% at 50% 100%, rgba(60, 20, 120, 0.12) 0%, transparent 60%);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    .wrapper {
+      max-width: 1140px;
+      margin: 0 auto;
+      background: rgba(16, 14, 26, 0.85);
+      backdrop-filter: blur(2px);
+      border-radius: 14px;
+      padding: 2rem;
+      border: 1px solid #1e1a30;
+    }
+
+    /* --- Header --- */
+    .header { display: flex; align-items: center; justify-content: space-between; gap: 14px; position: relative; z-index: 1; }
+    .header-left { display: flex; align-items: center; gap: 14px; }
+    .title-block { display: flex; flex-direction: column; gap: 2px; }
+    .eyebrow { font-size: 10px; font-weight: 500; letter-spacing: 0.18em; text-transform: uppercase; color: #7060b0; }
+    .title {
+      font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1;
+      background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .beta-tag {
+      display: flex; align-items: center; gap: 6px;
+      padding: 5px 14px 5px 10px; border-radius: 999px;
+      border: 1px solid #4a3880; background: rgba(80, 50, 160, 0.18);
+    }
+    .beta-dot { width: 6px; height: 6px; border-radius: 50%; background: #9070e0; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(0.7); } }
+    .beta-text { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #b090f0; }
+
+    /* --- Disclaimer text in header --- */
+    .header-disclaimer {
+      font-size: 10px; color: #4a3860; font-style: italic;
+      letter-spacing: 0.02em; text-align: right; max-width: 180px; line-height: 1.4;
+    }
+    
+    .divider-line {
+      margin-top: 1.75rem; height: 1px;
+      background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
+      position: relative; z-index: 1;
+    }
+
+    .content { position: relative; z-index: 1; margin-top: 1.75rem; }
+
+    /* --- Home Page --- */
+    .home-page { display: block; }
+    .home-hero {
+      text-align: center; padding: 1.5rem 1rem 2rem;
+    }
+    .home-title {
+      font-size: 22px; font-weight: 800; color: #d0c8f0;
+      letter-spacing: -0.3px; margin-bottom: 0.75rem;
+    }
+    .home-title span {
+      background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+      background-clip: text;
+    }
+    .home-desc {
+      font-size: 13px; color: #5a5080; line-height: 1.7;
+      max-width: 560px; margin: 0 auto 0.5rem;
+    }
+    .home-subdesc {
+      font-size: 11px; color: #3a3060; margin-top: 0.4rem;
+    }
+
+    /* --- Breadcrumb nav --- */
+    .breadcrumb-section {
+      margin-top: 2rem;
+    }
+    .breadcrumb-label {
+      font-size: 10px; font-weight: 700; color: #4a4070;
+      letter-spacing: 0.12em; text-transform: uppercase; margin-bottom: 0.75rem;
+    }
+    .breadcrumb-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+    }
+    .breadcrumb-btn {
+      display: flex; flex-direction: column; gap: 6px;
+      padding: 1rem 1.1rem; border-radius: 14px;
+      border: 1.5px solid #2a2245; background: #18162c;
+      cursor: pointer; text-align: left; font-family: inherit;
+      transition: all 0.15s; position: relative; overflow: hidden;
+    }
+    .breadcrumb-btn:hover { border-color: #5040a0; background: #201e38; }
+    .breadcrumb-btn.active { border-color: #7060c0; background: #221e42; }
+    .breadcrumb-btn-icon { font-size: 20px; line-height: 1; }
+    .breadcrumb-btn-name { font-size: 13px; font-weight: 700; color: #d0c8f0; }
+    .breadcrumb-btn-desc { font-size: 10px; color: #4a4070; line-height: 1.4; }
+    .breadcrumb-btn-soon {
+      position: absolute; top: 10px; right: 10px;
+      font-size: 9px; font-weight: 700; color: #4a3860;
+      background: rgba(80, 50, 120, 0.15); border: 1px solid #2a2248;
+      border-radius: 999px; padding: 2px 8px; letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* --- Feature page wrapper --- */
+    .feature-page { display: none; }
+    .feature-page.active { display: block; }
+
+    /* --- Back breadcrumb bar --- */
+    .back-bar {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 1.5rem;
+    }
+    .back-btn {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600; color: #5a5080;
+      background: none; border: 1px solid #2a2245; border-radius: 999px;
+      padding: 4px 12px; cursor: pointer; font-family: inherit; transition: all 0.12s
+    }
+    .back-btn:hover { color: #a090d0; border-color: #4a3880; background: rgba(80, 50, 120, 0.1); }
+    .back-crumb { font-size: 11px; color: #3a3060; }
+    .back-crumb-sep { font-size: 11px; color: #2a2245; }
+    .back-crumb-current { font-size: 11px; color: #7060c0; font-weight: 600; }
+
+    /* --- Section header --- */
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+    .section-title { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .section-header-right { display: flex; align-items: center; gap: 10px; }
+    .equipped-badge {
+      font-size: 12px; font-weight: 600; color: #5a5080;
+      background: rgba(80, 50, 120, 0.18); border: 1px solid #2e2448;
+      border-radius: 999px; padding: 3px 12px;
+    }
+    .clear-btn {
+      font-size: 11px; font-weight: 600; color: #6a3040;
+      background: rgba(120, 40, 60, 0.12); border: 1px solid #4a2030;
+      border-radius: 999px; padding: 3px 12px; cursor: pointer;
+      font-family: inherit; transition: all 0.12s;
+    }
+    .clear-btn:hover { color: #e06070; border-color: #8a3050; background: rgba(160, 40, 70, 0.2); }
+
+    /* --- Controls --- */
+    .controls-row { display: flex; align-items: center; gap: 10px; margin-bottom: 1.25rem; }
+    .ctrl-label { font-size: 12px; color: #5a5080; white-space: nowrap; }
+    .ctrl-btn {
+      width: 28px; height: 28px; border-radius: 8px; border: 1px solid #2e2448;
+      background: #1a1828; color: #a090d0; font-size: 16px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1; transition: all 0.12s; font-family: inherit;
+    }
+    .ctrl-btn:hover { background: #252040; border-color: #5040a0; color: #c0b0f0; }
+    .ctrl-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .ctrl-count { font-size: 14px; font-weight: 700; color: #c0b0f0; min-width: 20px; text-align: center; }
+
+    /* --- Team stats panel --- */
+    .team-stats-panel {
+      position: relative; overflow: hidden;
+      background: #13112a; border: 1.5px solid #2a2245;
+      border-radius: 16px; padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+    }
+    .team-stats-orb {
+      position: absolute; border-radius: 50%;
+      filter: blur(40px); opacity: 0.15; pointer-events: none;
+    }
+    .team-stats-orb-1 { width: 160px; height: 160px; background: #6040d0; top: -40px; left: -30px; }
+    .team-stats-orb-2 { width: 120px; height: 120px; background: #a040c0; bottom: -30px; right: 40px; }
+    .team-stats-left { position: relative; z-index: 1; }
+    .team-stats-title {
+      font-size: 13px; font-weight: 700; color: #7060c0;
+      letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 2px;
+    }
+    .team-stats-subtitle { font-size: 10px; color: #3a3460; }
+    .team-stats-values { display: flex; gap: 2rem; position: relative; z-index: 1; }
+    .team-stat-block { display: flex; flex-direction: column; align-items: flex-end; }
+    .team-stat-value { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; }
+    .team-stat-value.atk {
+      background: linear-gradient(120deg, #ffcc88 0%, #ff9040 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .team-stat-value.hp {
+      background: linear-gradient(120deg, #ff88aa 0%, #e04070 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .team-stat-icon { font-size: 11px; color: #4a4070; margin-bottom: 2px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+    /* --- Slots --- */
+    .slots-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 10px; }
+    .slot {
+      aspect-ratio: 1; border-radius: 14px; border: 1.5px dashed #2e2448;
+      background: #15132a; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.15s; position: relative;
+    }
+    .slot:hover { border-color: #5040a0; background: #1c1838; }
+    .slot-plus {
+      width: 36px; height: 36px; border-radius: 10px;
+      border: 1.5px solid #3a3060; background: #1e1a36;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 6px; transition: all 0.15s;
+    }
+    .slot:hover .slot-plus { border-color: #6050b0; background: #252050; }
+    .slot-plus-icon { font-size: 18px; color: #4a4080; line-height: 1; transition: color 0.15s; }
+    .slot:hover .slot-plus-icon { color: #8070c0; }
+    .slot-empty-label { font-size: 10px; color: #3a3060; font-weight: 500; letter-spacing: 0.06em; transition: color 0.15s; }
+    .slot:hover .slot-empty-label { color: #7060b0; }
+    .slot-img { width: 56px; height: 56px; object-fit: contain; margin-bottom: 4px; border-radius: 8px; }
+    .slot-name { font-size: 12px; font-weight: 700; text-align: center; }
+    .slot-tier { font-size: 9px; color: #5a5080; text-align: center; }
+    .slot-mut { font-size: 8px; color: #8070b0; text-align: center; line-height: 1.4; }
+    .slot-level { font-size: 9px; color: #4a4070; text-align: center; margin-top: 1px; }
+
+    /* --- Slot tooltip --- */
+    .slot-tooltip {
+      display: none; position: absolute;
+      bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: #1a1630; border: 1.5px solid #3a3060;
+      border-radius: 12px; padding: 12px 14px;
+      min-width: 170px; z-index: 100;
+      pointer-events: none; box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .slot:hover .slot-tooltip { display: block; }
+    .tooltip-fullname { font-size: 13px; font-weight: 700; color: #e0d8ff; margin-bottom: 3px; }
+    .tooltip-rarity { font-size: 11px; font-weight: 600; color: #a090d0; margin-bottom: 2px; }
+    .tooltip-tier { font-size: 10px; margin-bottom: 8px; }
+    .tooltip-divider { height: 1px; background: #2a2245; margin-bottom: 8px; }
+    .tooltip-stat { font-size: 12px; font-weight: 600; color: #d0c8f0; margin-bottom: 3px; }
+    .tooltip-level { font-size: 10px; color: #5a5080; margin-top: 4px; }
+
+    /* --- Inventory --- */
+    .inv-divider {
+      margin-top: 2rem; height: 1px;
+      background: linear-gradient(90deg, transparent, #2e2548 30%, #4a3880 50%, #2e2548 70%, transparent);
+    }
+    .inv-section {
+      overflow: hidden; max-height: 0; opacity: 0;
+      transition: max-height 0.4s ease, opacity 0.35s ease, margin-top 0.35s ease;
+      margin-top: 0;
+    }
+    .inv-section.open { max-height: 1000px; opacity: 1; margin-top: 1.5rem; }
+    .inv-body { display: flex; gap: 14px; align-items: flex-start; }
+    .inv-left { flex: 1; min-width: 0; }
+    .inv-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.75rem; }
+    .inv-label { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .inv-close-btn {
+      font-size: 11px; font-weight: 600; color: #4a4070;
+      background: none; border: 1px solid #2a2248; border-radius: 999px;
+      padding: 3px 12px; cursor: pointer; font-family: inherit; transition: all 0.12s;
+    }
+    .inv-close-btn:hover { color: #9080c0; border-color: #4a3880; background: rgba(80,50,120,0.15); }
+    .inv-search {
+      width: 100%; padding: 10px 14px; background: #1a1828;
+      border: 1.5px solid #2a2245; border-radius: 10px;
+      color: #e8e8f0; font-size: 14px; font-family: inherit;
+      outline: none; margin-bottom: 1rem; transition: border-color 0.15s;
+    }
+    .inv-search::placeholder { color: #3a3460; }
+    .inv-search:focus { border-color: #5a50a0; }
+    .inv-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 8px; max-height: 340px; overflow-y: auto; padding-right: 4px;
+    }
+    .inv-grid::-webkit-scrollbar { width: 5px; }
+    .inv-grid::-webkit-scrollbar-track { background: transparent; }
+    .inv-grid::-webkit-scrollbar-thumb { background: #2e2448; border-radius: 3px; }
+    .inv-card {
+      border-radius: 12px; border: 1.5px solid #2a2245;
+      background: #18162c; padding: 14px 10px 12px;
+      text-align: center; cursor: pointer; transition: all 0.12s;
+      display: flex; flex-direction: column; align-items: center; gap: 5px;
+    }
+    .inv-card:hover { background: #201e3a; border-color: #5040a0; }
+    .inv-card.selected { border-color: #8060d0; background: #221e42; }
+    .inv-card-img { width: 52px; height: 52px; object-fit: contain; border-radius: 6px; }
+    .inv-card-name { font-size: 13px; font-weight: 700; color: #d0c8f0; }
+    .inv-card-tier { font-size: 10px; font-weight: 500; }
+    .inv-no-results { grid-column: 1 / -1; text-align: center; padding: 2rem; color: #2e2a48; font-size: 13px; }
+
+    /* --- Mutation panel --- */
+    .mut-panel {
+      width: 210px; flex-shrink: 0;
+      background: #13112a; border: 1.5px solid #2a2245;
+      border-radius: 14px; padding: 1.25rem 1rem;
+      display: flex; flex-direction: column; gap: 10px;
+      opacity: 0; transform: translateX(10px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      pointer-events: none;
+    }
+    .mut-panel.visible { opacity: 1; transform: translateX(0); pointer-events: all; }
+    .mut-panel-title { font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase; }
+    .mut-slime-name { font-size: 14px; font-weight: 700; color: #d0c8f0; }
+    .mut-divider { height: 1px; background: #2a2245; }
+    .mut-tags { display: flex; flex-direction: column; gap: 7px; }
+    .mut-tag {
+      padding: 8px 12px; border-radius: 8px; border: 1.5px solid #2a2245;
+      background: #1a1828; color: #6050a0; font-size: 12px; font-weight: 600;
+      cursor: pointer; transition: all 0.12s; font-family: inherit; text-align: left;
+      letter-spacing: 0.04em;
+    }
+    .mut-tag:hover { border-color: #4a3880; color: #a090d0; background: #201e38; }
+    .mut-tag.active { border-color: #7060c0; background: #221e42; color: #c0b0f0; }
+    .mut-tag.disabled { opacity: 0.25; cursor: not-allowed; }
+    .mut-preview {
+      font-size: 10px; color: #5a5080; min-height: 14px;
+      font-style: italic; letter-spacing: 0.03em;
+    }
+
+    /* --- Level row in the mut panel --- */
+    .mut-level-row {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #0f0e1a; border: 1px solid #2a2245;
+      border-radius: 8px; padding: 7px 10px;
+    }
+    .mut-level-label { font-size: 11px; color: #5a5080; font-weight: 600; }
+    .mut-level-input {
+      width: 64px; padding: 4px 6px; background: #1a1828;
+      border: 1px solid #2e2448; border-radius: 6px;
+      color: #c0b0f0; font-size: 13px; font-weight: 700;
+      font-family: inherit; text-align: center; outline: none;
+      transition: border-color 0.12s;
+    }
+    .mut-level-input:focus { border-color: #5040a0; }
+
+    /* --- Stat Preview --- */
+    .stat-preview {
+      background: #0f0e1a; border: 1px solid #2a2245;
+      border-radius: 10px; padding: 10px 12px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .stat-preview-title { font-size: 10px; font-weight: 700; color: #4a4070; letter-spacing: 0.08em; text-transform: uppercase; }
+    .stat-preview-row { font-size: 12px; font-weight: 600; color: #c0b0f0; }
+    .stat-preview-rarity { font-size: 10px; color: #7060a0; margin-top: 2px; }
+
+    /* --- Apply button --- */
+    .apply-btn {
+      margin-top: 2px; padding: 10px; border-radius: 10px;
+      border: 1.5px solid #5040a0; background: rgba(80,50,160,0.2);
+      color: #c0b0f0; font-size: 13px; font-weight: 700;
+      cursor: pointer; font-family: inherit; transition: all 0.12s;
+      letter-spacing: 0.04em;
+    }
+    .apply-btn:hover { background: rgba(100,70,200,0.35); border-color: #8060d0; color: #e0d8ff; }
+
+    /* --- Compare Stats page --- */
+    .compare-layout {
+      display: grid; grid-template-columns: 1fr 52px 1fr; gap: 1rem; align-items: start;
+    }
+    .compare-vs-col { display: flex; justify-content: center; padding-top: 3rem; }
+    .compare-vs-badge {
+      font-size: 13px; font-weight: 800; color: #4a3880; letter-spacing: 0.1em;
+      border: 1.5px solid #2a2245; background: #13112a; border-radius: 999px; padding: 8px 14px;
+    }
+    .compare-side { display: flex; flex-direction: column; gap: 10px; }
+    .compare-side-label {
+      font-size: 11px; font-weight: 700; color: #5a50a0; letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .compare-selected-name {
+      font-size: 13px; min-height: 22px; padding: 8px 10px;
+      background: #0f0e1a; border: 1px solid #2a2245; border-radius: 8px; color: #3a3460;
+    }
+    .compare-inv-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 6px; max-height: 200px; overflow-y: auto; padding-right: 4px;
+    }
+    .compare-inv-grid::-webkit-scrollbar { width: 5px; }
+    .compare-inv-grid::-webkit-scrollbar-track { background: transparent; }
+    .compare-inv-grid::-webkit-scrollbar-thumb { background: #2e2448; border-radius: 3px; }
+    .compare-mut-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .compare-stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 10px; border-radius: 8px; background: #0f0e1a; border: 1px solid #2a2245;
+    }
+    .compare-stat-label { font-size: 11px; color: #5a5080; }
+    .compare-stat-value { font-size: 14px; font-weight: 700; color: #c0b0f0; transition: color 0.2s; }
+    .compare-stat-win  { color: #60d090; }
+    .compare-stat-lose { color: #332e52; }
+    .compare-stat-tie  { color: #c0b0f0; }
+    .compare-stat-diff { font-size: 10px; font-weight: 700; letter-spacing: 0.04em; min-height: 13px; transition: color 0.2s; }
+    .compare-diff-win  { color: #60d090; }
+    .compare-diff-lose { color: #5a3040; }
+    .compare-diff-tie  { color: #4a4070; }
+
+    /* --- Luck Calculator --- */
+    .luck-section-label {
+      font-size: 10px; font-weight: 700; color: #4a4070;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      margin-top: 1.5rem; margin-bottom: 0.75rem;
+    }
+    .luck-factors-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px; }
+    .luck-mult-grid    { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; }
+    .luck-card {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 14px; border-radius: 12px; border: 1.5px solid #2a2245;
+      background: #18162c; transition: border-color 0.15s, background 0.15s;
+    }
+    .luck-card.active { border-color: #5040a0; background: #1e1c38; }
+    .luck-card-left { display: flex; align-items: center; gap: 10px; }
+    .luck-toggle {
+      width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+      border: 1.5px solid #2e2448; background: #13112a; color: transparent;
+      font-size: 13px; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; font-family: inherit; transition: all 0.15s; line-height: 1;
+    }
+    .luck-toggle.active { border-color: #7060c0; background: #2a2050; color: #c0b0f0; }
+    .luck-always-on {
+      width: 26px; height: 26px; border-radius: 7px; flex-shrink: 0;
+      border: 1.5px solid #5040a0; background: #2a2050;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; color: #9080d0;
+    }
+    .luck-card-name { font-size: 13px; font-weight: 700; color: #5a5080; transition: color 0.15s; }
+    .luck-card.active .luck-card-name { color: #d0c8f0; }
+    .luck-card-note { font-size: 10px; color: #3a3460; transition: color 0.15s; }
+    .luck-card.active .luck-card-note { color: #5a5080; }
+    .luck-const-val { font-size: 15px; font-weight: 700; color: #3a3460; transition: color 0.15s; }
+    .luck-card.active .luck-const-val { color: #a090d0; }
+    .luck-input-wrap { display: flex; align-items: center; gap: 3px; }
+    .luck-prefix { font-size: 13px; font-weight: 700; color: #3a3460; transition: color 0.15s; }
+    .luck-card.active .luck-prefix { color: #7060c0; }
+    .luck-suffix { font-size: 12px; font-weight: 700; color: #3a3460; transition: color 0.15s; margin-left: 2px; }
+    .luck-card.active .luck-suffix { color: #7060c0; }
+    .luck-input {
+      width: 62px; padding: 5px 6px; background: #0f0e1a;
+      border: 1px solid #2a2245; border-radius: 7px;
+      color: #2e2a48; font-size: 13px; font-weight: 700;
+      font-family: inherit; text-align: center; outline: none;
+      transition: color 0.15s, border-color 0.15s; pointer-events: none;
+    }
+    .luck-card.active .luck-input { color: #c0b0f0; border-color: #3a3268; pointer-events: auto; }
+    .luck-card.active .luck-input:focus { border-color: #5040a0; }
+    .luck-server-stepper { display: flex; align-items: center; gap: 8px; }
+    .luck-server-val {
+      font-size: 14px; font-weight: 700; color: #3a3460;
+      min-width: 64px; text-align: center; transition: color 0.15s;
+    }
+    .luck-card.active .luck-server-val { color: #c0b0f0; }
+    .luck-page-layout { display: grid; grid-template-columns: 1fr 260px; gap: 1.5rem; align-items: start; }
+    .luck-list { display: flex; flex-direction: column; gap: 8px; }
+    .luck-right-col { position: sticky; top: 1.5rem; }
+    .luck-card-name-row { display: flex; align-items: center; gap: 6px; }
+    .luck-gamepass-tag {
+      font-size: 9px; font-weight: 700; color: #b08020;
+      background: rgba(180, 130, 0, 0.15); border: 1px solid rgba(180, 130, 0, 0.35);
+      border-radius: 999px; padding: 2px 7px; letter-spacing: 0.06em;
+      text-transform: uppercase; white-space: nowrap;
+    }
+    .luck-result-panel {
+      background: #13112a; border: 1.5px solid #2a2245;
+      border-radius: 16px; padding: 1.25rem 1.5rem; position: relative; overflow: hidden;
+    }
+    .luck-result-orb {
+      position: absolute; border-radius: 50%; filter: blur(40px);
+      opacity: 0.15; pointer-events: none;
+      width: 200px; height: 200px; background: #6040d0; top: -60px; right: -40px;
+    }
+    .luck-result-rows { position: relative; z-index: 1; display: flex; flex-direction: column; gap: 10px; }
+    .luck-result-row { display: flex; align-items: center; justify-content: space-between; }
+    .luck-result-label { font-size: 12px; color: #5a5080; }
+    .luck-result-val { font-size: 16px; font-weight: 700; color: #c0b0f0; }
+    .luck-result-divider { height: 1px; background: #2e2548; }
+    .luck-result-total-label { font-size: 12px; font-weight: 700; color: #7060c0; letter-spacing: 0.08em; text-transform: uppercase; }
+    .luck-result-total-val {
+      font-size: 36px; font-weight: 800; letter-spacing: -0.5px; line-height: 1;
+      background: linear-gradient(120deg, #d0c8ff 0%, #a880ff 50%, #e070cc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .luck-input-lg { width: 100px; }
+    .luck-breakdown-section {
+      font-size: 10px; font-weight: 700; color: #5040a0;
+      letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .luck-breakdown-list { display: flex; flex-direction: column; gap: 2px; }
+    .luck-breakdown-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 2px 0; font-size: 12px; color: #6050a0;
+    }
+    .luck-breakdown-val { font-weight: 700; color: #a090d0; }
+    .luck-breakdown-subtotal {
+      display: flex; justify-content: flex-end; align-items: center;
+      padding: 5px 0 3px; font-size: 13px; font-weight: 700; color: #c0b0f0;
+      border-top: 1px solid #2a2245; margin-top: 4px;
+    }
+
+    /* Food Calculator */
+    .food-calc-layout { display: grid; grid-template-columns: 260px 1fr 250px; gap: 1.5rem; align-items: start; }
+    .food-slime-col { display: flex; flex-direction: column; gap: 8px; }
+    .food-right-col { position: sticky; top: 1.5rem; }
+    .food-qty-list { display: flex; flex-direction: column; gap: 6px; }
+    .food-qty-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 12px; border-radius: 8px;
+      background: #151522; border: 1.5px solid #1c1c2c;
+    }
+    .food-qty-left { display: flex; align-items: center; gap: 8px; }
+    .food-qty-icon { font-size: 17px; line-height: 1; }
+    .food-qty-name { font-size: 13px; font-weight: 600; color: #d4d0f0; }
+    .food-qty-xp { font-size: 10px; color: #383858; }
+    .food-qty-input {
+      width: 72px; padding: 5px 6px; background: #0e0e18;
+      border: 1px solid #222232; border-radius: 6px;
+      color: #d4d0f0; font-size: 13px; font-weight: 700;
+      font-family: inherit; text-align: center; outline: none;
+      transition: border-color 0.12s;
+    }
+    .food-qty-input:focus { border-color: #4a3a8a; }
+    .food-result-empty { font-size: 13px; color: #38385a; font-style: italic; padding: 4px 0; }
+    .food-result-level-row {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 8px;
+    }
+    .food-result-level-label { font-size: 12px; font-weight: 600; color: #555070; }
+    .food-result-level-val { font-size: 36px; font-weight: 800; color: #e0dcff; letter-spacing: -1px; line-height: 1; }
+    .food-result-level-from { font-size: 12px; color: #383858; margin-top: 3px; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="bg-orb orb1"></div>
+    <div class="bg-orb orb2"></div>
+
+    <!-- Header -->
+    <div class="header">
+     <div class="header-left">
+       <div class="title-block">
+         <span class="eyebrow">Simulate Slime Teams, Stats &amp; More!</span>
+         <span class="title">Slime RNG Simulation</span>
+       </div>
+       <div class="beta-tag">
+         <div class="beta-dot"></div>
+         <span class="beta-text">Beta</span>
+       </div>
+     </div>
+      <span class="header-disclaimer">Not All Chances Are Accurate For All Slimes</span>
+    </div>
+
+    <div class="divider-line"></div>
+
+    <div class="content">
+      <!-- Home page -->
+      <div class="home-page" id="home-page">
+        <div class="home-hero">
+          <div class="home-title">Your <span>Slime RNG</span> Simulation Toolkit</div>
+          <p class="home-desc">
+            A simulation tool for Slime RNG on Roblox. This site will have multiple features that you can simulate such as your slime team (or any slime team that you wish to simulate), compare slime stats, calculate total luck based on various factors, calculate the amount of food needed to feed a slime to a set level that you may want, and more!
+          </p>
+          <p class="home-subdesc">Select a feature below to get started.</p>
+        </div>
+        <!-- Breadcrumb feature buttons -->
+        <div class="breadcrumb-section">
+          <div class="breadcrumb-label">Features</div>
+          <div class="breadcrumb-grid">
+            <!-- Slime Team breadcrumb -->
+            <button class="breadcrumb-btn" onclick="NavigateTo('slime-team')">
+              <span class="breadcrumb-btn-icon">🛡️</span>
+              <span class="breadcrumb-btn-name">Slime Team</span>
+              <span class="breadcrumb-btn-desc">Build a simulated team, set mutations &amp; levels, and view combined stats.</span>
+            </button>
+            <!-- Coming soon placeholders will be here -->
+            <button class="breadcrumb-btn" onclick="NavigateTo('luck-calc')">
+              <span class="breadcrumb-btn-icon">🍀</span>
+              <span class="breadcrumb-btn-name">Luck Calculator</span>
+              <span class="breadcrumb-btn-desc">Combine all the luck factors that boost your luck to view overall luck.</span>
+            </button>
+            <button class="breadcrumb-btn" onclick="NavigateTo('compare-stats')">
+              <span class="breadcrumb-btn-icon">🧐</span>
+              <span class="breadcrumb-btn-name">Compare Slime Stats</span>
+              <span class="breadcrumb-btn-desc">Side by side stat comparison between 2 slimes with any mutations.</span>
+            </button>
+            <button class="breadcrumb-btn" onclick="NavigateTo('food-calc')">
+              <span class="breadcrumb-btn-icon">🍴</span>
+              <span class="breadcrumb-btn-name">Food Calculator</span>
+              <span class="breadcrumb-btn-desc">Find out exactly how much food you need to reach your target level for a slime.</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <!-- End home page -->
+
+      <!-- Slime team feature page -->
+      <div class="feature-page" id="page-slime-team">
+        <div class="back-bar">
+          <button class="back-btn" onclick="NavigateTo('home')">← Home</button>
+          <span class="back-crumb">Home</span>
+          <span class="back-crumb-sep">›</span>
+          <span class="back-crumb-current">Slime Team</span>
+        </div>
+        <!-- Section header -->
+        <div class="section-header">
+          <span class="section-title">Slime Team</span>
+          <div class="section-header-right">
+            <button class="clear-btn" onclick="ClearTeam()">✕ Clear Team</button>
+            <span class="equipped-badge" id="equipped-label">0 / 1 Equipped</span>
+          </div>
+        </div>
+        <!-- Team stats panel -->
+        <div class="team-stats-panel">
+          <div class="team-stats-orb team-stats-orb-1"></div>
+          <div class="team-stats-orb team-stats-orb-2"></div>
+          <div class="team-stats-left">
+            <div class="team-stats-title">Overall Team Stats</div>
+            <div class="team-stats-subtitle">Combined Across All Equipped Slimes</div>
+          </div>
+          <div class="team-stats-values">
+            <div class="team-stat-block">
+              <div class="team-stat-icon">💪 Total ATK</div>
+              <div class="team-stat-value atk" id="team-total-atk">—</div>
+            </div>
+            <div class="team-stat-block">
+              <div class="team-stat-icon">❤️ Total HP</div>
+              <div class="team-stat-value hp" id="team-total-hp">—</div>
+            </div>
+          </div>
+        </div>
+        <!-- Controls -->
+        <div class="controls-row">
+          <span class="ctrl-label">Max Slots</span>
+          <button class="ctrl-btn" id="btn-minus" onclick="ChangeSlots(-1)">−</button>
+          <span class="ctrl-count" id="slot-count">1</span>
+          <button class="ctrl-btn" id="btn-plus" onclick="ChangeSlots(1)">+</button>
+        </div>
+
+        <div class="slots-grid" id="slots-grid"></div>
+
+        <!-- Inventory -->
+        <div class="inv-divider"></div>
+        <div class="inv-section" id="inv-section">
+          <div class="inv-header">
+            <span class="inv-label">Inventory — Select a Slime</span>
+            <button class="inv-close-btn" onclick="CloseInventory()">✕ Close</button>
+          </div>
+          <div class="inv-body">
+            <div class="inv-left">
+              <input type="text" class="inv-search" id="inv-search" placeholder="Search Slimes..." oninput="RenderInventory()" />
+              <div class="inv-grid" id="inv-grid"></div>
+            </div>
+            <!-- Mutation panel -->
+            <div class="mut-panel" id="mut-panel">
+              <span class="mut-panel-title">Mutations</span>
+              <span class="mut-slime-name" id="mut-slime-name">—</span>
+              <div class="mut-divider"></div>
+              <div class="mut-tags" id="mut-tags"></div>
+              <span class="mut-preview" id="mut-preview"></span>
+              <div class="mut-level-row">
+                <span class="mut-level-label">Level</span>
+                <input type="number" class="mut-level-input" id="pending-level-input" min="1" max="250" value="1" oninput="OnPendingLevelChange()" />
+              </div>
+              <div class="mut-divider"></div>
+              <div class="stat-preview">
+                <span class="stat-preview-title">Preview</span>
+                <span class="stat-preview-row" id="preview-atk">💪 ATK —</span>
+                <span class="stat-preview-row" id="preview-hp">❤️ HP —</span>
+                <div class="mut-divider"></div>
+                <span class="stat-preview-rarity" id="preview-rarity">Rarity —</span>
+              </div>
+              <button class="apply-btn" onclick="ApplySlime()">Equip →</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End of the Slime Team feature page -->
+
+      <!-- Compare Stats feature page -->
+      <div class="feature-page" id="page-compare-stats">
+        <div class="back-bar">
+          <button class="back-btn" onclick="NavigateTo('home')">← Home</button>
+          <span class="back-crumb">Home</span>
+          <span class="back-crumb-sep">›</span>
+          <span class="back-crumb-current">Compare Slime Stats</span>
+        </div>
+        <div class="section-header">
+          <span class="section-title">Compare Slime Stats</span>
+        </div>
+        <div class="compare-layout">
+          <!-- Side A -->
+          <div class="compare-side">
+            <span class="compare-side-label">Slime A</span>
+            <input type="text" class="inv-search" id="cmp-search-a" placeholder="Search Slimes..." oninput="RenderCompareInventory('a')" />
+            <div class="compare-inv-grid" id="cmp-grid-a"></div>
+            <div class="compare-selected-name" id="cmp-selected-name-a">No slime selected</div>
+            <div class="compare-mut-row" id="cmp-muts-a"></div>
+            <div class="mut-level-row">
+              <span class="mut-level-label">Level</span>
+              <input type="number" class="mut-level-input" id="cmp-level-a" min="1" max="250" value="1" oninput="OnCompareLevelChange('a')" />
+            </div>
+            <div class="stat-preview">
+              <span class="stat-preview-title">Stats</span>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">💪 ATK</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-atk-a">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-atk-a"></span>
+                </div>
+              </div>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">❤️ HP</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-hp-a">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-hp-a"></span>
+                </div>
+              </div>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">✨ Rarity</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-rar-a">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-rar-a"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- VS -->
+          <div class="compare-vs-col">
+            <div class="compare-vs-badge">VS</div>
+          </div>
+          <!-- Side B -->
+          <div class="compare-side">
+            <span class="compare-side-label">Slime B</span>
+            <input type="text" class="inv-search" id="cmp-search-b" placeholder="Search Slimes..." oninput="RenderCompareInventory('b')" />
+            <div class="compare-inv-grid" id="cmp-grid-b"></div>
+            <div class="compare-selected-name" id="cmp-selected-name-b">No slime selected</div>
+            <div class="compare-mut-row" id="cmp-muts-b"></div>
+            <div class="mut-level-row">
+              <span class="mut-level-label">Level</span>
+              <input type="number" class="mut-level-input" id="cmp-level-b" min="1" max="250" value="1" oninput="OnCompareLevelChange('b')" />
+            </div>
+            <div class="stat-preview">
+              <span class="stat-preview-title">Stats</span>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">💪 ATK</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-atk-b">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-atk-b"></span>
+                </div>
+              </div>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">❤️ HP</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-hp-b">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-hp-b"></span>
+                </div>
+              </div>
+              <div class="compare-stat-row">
+                <span class="compare-stat-label">✨ Rarity</span>
+                <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px">
+                  <span class="compare-stat-value" id="cmp-stat-rar-b">—</span>
+                  <span class="compare-stat-diff" id="cmp-diff-rar-b"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Compare Stats feature page -->
+
+      <!-- Luck Calculator feature page -->
+      <div class="feature-page" id="page-luck-calc">
+        <div class="back-bar">
+          <button class="back-btn" onclick="NavigateTo('home')">← Home</button>
+          <span class="back-crumb">Home</span>
+          <span class="back-crumb-sep">›</span>
+          <span class="back-crumb-current">Luck Calculator</span>
+        </div>
+        <div class="section-header">
+          <span class="section-title">Luck Calculator</span>
+        </div>
+        <div class="luck-page-layout">
+          <!-- Left: factors + multipliers -->
+          <div>
+            <div class="luck-section-label" style="margin-top:0">Luck Factors</div>
+            <div class="luck-list" id="luck-factors-grid"></div>
+            <div class="luck-section-label">Multipliers</div>
+            <div class="luck-list">
+              <div class="luck-card" id="luck-card-globalluck">
+                <div class="luck-card-left">
+                  <button class="luck-toggle" id="luck-toggle-globalluck" onclick="ToggleGlobalLuck()"></button>
+                  <div>
+                    <div class="luck-card-name">Global Luck</div>
+                  </div>
+                </div>
+                <div class="luck-input-wrap">
+                  <span class="luck-prefix">×</span>
+                  <input type="number" class="luck-input luck-input-lg" id="luck-globalluck-input" min="1" step="0.1" value="1" oninput="OnGlobalLuckInput()" disabled />
+                </div>
+              </div>
+              <div class="luck-card active" id="luck-card-server">
+                <div class="luck-card-left">
+                  <div>
+                    <div class="luck-card-name">Server Luck</div>
+                  </div>
+                </div>
+                <div class="luck-server-stepper">
+                  <button class="ctrl-btn" id="luck-server-minus" onclick="StepServerLuck(-1)" disabled>−</button>
+                  <span class="luck-server-val" id="luck-server-val">×1</span>
+                  <button class="ctrl-btn" id="luck-server-plus" onclick="StepServerLuck(1)">+</button>
+                </div>
+              </div>
+              <div class="luck-card active">
+                <div class="luck-card-left">
+                  <div>
+                    <div class="luck-card-name">Rebirths</div>
+                  </div>
+                </div>
+                <div class="luck-input-wrap">
+                  <span class="luck-prefix">×</span>
+                  <input type="text" class="luck-input luck-input-lg" id="luck-rebirths-input" value="1" oninput="OnRebirthsInput()" />
+                </div>
+              </div>
+              <div class="luck-card active">
+                <div class="luck-card-left">
+                  <div>
+                    <div class="luck-card-name">Index ×</div>
+                  </div>
+                </div>
+                <div class="luck-input-wrap">
+                  <span class="luck-prefix">×</span>
+                  <input type="number" class="luck-input" id="luck-idxpct-input" min="1" step="0.1" value="1" oninput="OnIndexMultiInput()" />
+                </div>
+              </div>
+            </div>
+            <div class="luck-section-label">Rolling Multis</div>
+            <div class="luck-list" id="luck-rolling-list"></div>
+            <div class="luck-section-label">Jackpot Roll</div>
+            <div class="luck-list">
+              <div class="luck-card" id="luck-card-jackpot">
+                <div class="luck-card-left">
+                  <button class="luck-toggle" id="luck-toggle-jackpot" onclick="ToggleJackpot()"></button>
+                  <div class="luck-card-name">Jackpot Roll</div>
+                </div>
+                <span class="luck-const-val" id="luck-jackpot-val" style="color:#3a3460">×1000</span>
+              </div>
+            </div>
+          </div>
+          <!-- Right: result -->
+          <div class="luck-right-col">
+            <div class="luck-result-panel">
+              <div class="luck-result-rows" id="luck-result-rows"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Luck Calculator feature page -->
+
+      <!-- Food Calculator feature page -->
+      <div class="feature-page" id="page-food-calc">
+        <div class="back-bar">
+          <button class="back-btn" onclick="NavigateTo('home')">← Home</button>
+          <span class="back-crumb">Home</span>
+          <span class="back-crumb-sep">›</span>
+          <span class="back-crumb-current">Food Calculator</span>
+        </div>
+        <div class="section-header">
+          <span class="section-title">Food Calculator</span>
+        </div>
+        <div class="food-calc-layout">
+          <!-- Col 1: Food quantities -->
+          <div>
+            <div class="luck-section-label" style="margin-top:0">Food</div>
+            <div class="food-qty-list" id="food-qty-list"></div>
+          </div>
+          <!-- Col 2: Slime picker -->
+          <div class="food-slime-col">
+            <div class="luck-section-label" style="margin-top:0">Slime</div>
+            <input type="text" class="inv-search" id="food-slime-search" placeholder="Search Slimes..." oninput="RenderFoodInventory()" />
+            <div class="compare-inv-grid" id="food-slime-grid"></div>
+            <div class="compare-selected-name" id="food-slime-name">No slime selected</div>
+            <div class="compare-mut-row" id="food-muts"></div>
+            <div class="mut-level-row">
+              <span class="mut-level-label">Current Level</span>
+              <input type="number" class="mut-level-input" id="food-start-level" min="1" max="249" value="1" oninput="CalcFoodResult()" />
+            </div>
+          </div>
+          <!-- Col 3: Result -->
+          <div class="food-right-col">
+            <div class="luck-result-panel" id="food-result-panel">
+              <div id="food-result-rows"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- End Food Calculator feature page -->
+    </div>
+  </div>
+
+  <script>
+    // --- Stat Multis
+    const STAT_MULTIS = {
+      "": 1,
+      "Big": 4,
+      "Shiny": 6,
+      "Huge": 10,
+      "Inverted": 13,
+      "Big Inverted": 52,
+      "Huge Inverted": 130,
+      "Shiny Inverted": 78,
+      "Shiny Big": 24,
+      "Shiny Huge": 60,
+      "Shiny Big Inverted": 312,
+      "Shiny Huge Inverted": 780,
+    };
+
+    // --- Rarity multis
+    const RARITY_MULTIS = {
+      "": 1,
+      "Big": 100,
+      "Shiny": 250,
+      "Huge": 1000,
+      "Inverted": 2500,
+      "Shiny Big": 25000,
+      "Shiny Huge": 250000,
+      "Big Inverted": 250000,
+      "Shiny Inverted": 625000,
+      "Huge Inverted": 2500000,
+      "Shiny Big Inverted": 62500000,
+      "Shiny Huge Inverted": 625000000,
+    }; 
+
+    // --- Slime Data
+    const slimes = [
+      /* Basics */
+      { name: "Goopy",           tier: "Basic",        color: "#aaaaaa", BaseATK: 4,      BaseHP: 10,      BaseRarity: 3,              image: "Slimes/goopy.png" },
+      { name: "Sunset",          tier: "Basic",        color: "#aaaaaa", BaseATK: 5,      BaseHP: 15,      BaseRarity: 5,              image: "Slimes/sunset.png" },
+      /* Commons */
+      { name: "Fin",             tier: "Common",       color: "#a6ff8b", BaseATK: 6,      BaseHP: 20,      BaseRarity: 8,              image: "Slimes/fin.png" },
+      { name: "Leafy",           tier: "Common",       color: "#a6ff8b", BaseATK: 7,      BaseHP: 22,      BaseRarity: 11,             image: "Slimes/leafy.png" },
+      /* Uncommons */
+      { name: "Meow",            tier: "Uncommon",     color: "#98f0be", BaseATK: 8,      BaseHP: 27,      BaseRarity: 35,             image: "Slimes/meow.png" },
+      { name: "Glo",             tier: "Uncommon",     color: "#98f0be", BaseATK: 10,     BaseHP: 30,      BaseRarity: 57,             image: "Slimes/glo.png" },
+      /* Rares */
+      { name: "Buggy",           tier: "Rare",         color: "#85d0fb", BaseATK: 13,     BaseHP: 36,      BaseRarity: 103,            image: "Slimes/buggy.png" },
+      { name: "Boomy",           tier: "Rare",         color: "#85d0fb", BaseATK: 15,     BaseHP: 43,      BaseRarity: 160,            image: "Slimes/boomy.png" },
+      { name: "Brutis",          tier: "Rare",         color: "#85d0fb", BaseATK: 18,     BaseHP: 50,      BaseRarity: 263,            image: "Slimes/brutis.png" },
+      { name: "Frankenslime",    tier: "Rare",         color: "#85d0fb", BaseATK: 20,     BaseHP: 60,      BaseRarity: 415,            image: "Slimes/frankenSlime.png" },
+      /* Epics */
+      { name: "Orca",            tier: "Epic",         color: "#ba85ff", BaseATK: 25,     BaseHP: 72,      BaseRarity: 719,            image: "Slimes/orca.png" },
+      { name: "Spike",           tier: "Epic",         color: "#ba85ff", BaseATK: 29,     BaseHP: 88,      BaseRarity: 1260,           image: "Slimes/spike.png" },
+      { name: "Axolotl",         tier: "Epic",         color: "#ba85ff", BaseATK: 36,     BaseHP: 105,     BaseRarity: 2390,           image: "Slimes/axolotl.png" },
+      /* Legendaries */
+      { name: "Spidey",          tier: "Legendary",    color: "#ffac7b", BaseATK: 43,     BaseHP: 121,     BaseRarity: 4270,           image: "Slimes/spidey.png" },
+      { name: "Mushy",           tier: "Legendary",    color: "#ffac7b", BaseATK: 50,     BaseHP: 148,     BaseRarity: 7770,           image: "Slimes/mushy.png" },
+      { name: "Rocky",           tier: "Legendary",    color: "#ffac7b", BaseATK: 58,     BaseHP: 176,     BaseRarity: 13900,          image: "Slimes/rocky.png" },
+      /* Mythics */
+      { name: "Lucky",           tier: "Mythic",       color: "#ff87bf", BaseATK: 67,     BaseHP: 200,     BaseRarity: 21500,          image: "Slimes/lucky.png" },
+      { name: "Stump",           tier: "Mythic",       color: "#ff87bf", BaseATK: 75,     BaseHP: 232,     BaseRarity: 35900,          image: "Slimes/stump.png" },
+      { name: "Pondy",            tier: "Mythic",       color: "#ff87bf", BaseATK: 85,     BaseHP: 256,     BaseRarity: 53800,          image: "Slimes/lily.png" },
+      { name: "Crafty",          tier: "Mythic",       color: "#ff87bf", BaseATK: 90,     BaseHP: 270,     BaseRarity: 57400,          image: "Slimes/crafty.png" },
+      /* Divines */
+      { name: "Icy",             tier: "Divine",       color: "#fee989", BaseATK: 96,     BaseHP: 290,     BaseRarity: 86100,          image: "Slimes/icy.png" },
+      { name: "Orbit",           tier: "Divine",       color: "#fee989", BaseATK: 115,    BaseHP: 344,     BaseRarity: 126000,         image: "Slimes/orbit.png" },
+      { name: "Aegis",           tier: "Divine",       color: "#fee989", BaseATK: 138,    BaseHP: 414,     BaseRarity: 215000,         image: "Slimes/aegis.png" },
+      { name: "Wicked",          tier: "Divine",       color: "#fee989", BaseATK: 166,    BaseHP: 496,     BaseRarity: 326000,         image: "Slimes/wicked.png" },
+      { name: "Thorn",           tier: "Divine",       color: "#fee989", BaseATK: 167,    BaseHP: 500,     BaseRarity: 330000,         image: "Slimes/thorn.png" },
+      /* Prismatics */
+      { name: "King",            tier: "Prismatic",    color: "#5dfbcb", BaseATK: 189,    BaseHP: 567,     BaseRarity: 538000,         image: "Slimes/king.png" },
+      { name: "Guest",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 208,    BaseHP: 624,     BaseRarity: 861000,         image: "Slimes/guest.png" },
+      { name: "Ninja",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 230,    BaseHP: 690,     BaseRarity: 1260000,        image: "Slimes/ninja.png" },
+      { name: "Buzz",            tier: "Prismatic",    color: "#5dfbcb", BaseATK: 270,    BaseHP: 810,     BaseRarity: 2150000,        image: "Slimes/buzz.png" },
+      { name: "Stormy",          tier: "Prismatic",    color: "#5dfbcb", BaseATK: 291,    BaseHP: 870,     BaseRarity: 3070000,        image: "Slimes/stormy.png" },
+      { name: "Geode",           tier: "Prismatic",    color: "#5dfbcb", BaseATK: 300,    BaseHP: 900,     BaseRarity: 3110000,        image: "Slimes/geode.png" },
+      /* Transcendents */
+      { name: "Bucky",           tier: "Transcendent", color: "#e084ff", BaseATK: 333,    BaseHP: 999,     BaseRarity: 4780000,        image: "Slimes/bucky.png" },
+      { name: "Pokey",           tier: "Transcendent", color: "#e084ff", BaseATK: 371,    BaseHP: 1111,    BaseRarity: 7180000,        image: "Slimes/pokey.png" },
+      { name: "SlimeSlime",      tier: "Transcendent", color: "#e084ff", BaseATK: 419,    BaseHP: 1250,    BaseRarity: 10700000,       image: "Slimes/slimeSlime.png" },
+      { name: "Unicorn",         tier: "Transcendent", color: "#e084ff", BaseATK: 508,    BaseHP: 1520,    BaseRarity: 17900000,       image: "Slimes/unicorn.png" },
+      /* Ethereals */
+      { name: "Wizzy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 612,    BaseHP: 1830,    BaseRarity: 26900000,       image: "Slimes/wizzy.png" },
+      { name: "Petal",           tier: "Ethereal",     color: "#aadeff", BaseATK: 734,    BaseHP: 2300,    BaseRarity: 39100000,       image: "Slimes/petal.png" },
+      { name: "SlimeSlimeSlime", tier: "Ethereal",     color: "#aadeff", BaseATK: 676,    BaseHP: 2002,    BaseRarity: 42900000,       image: "Slimes/slimeSlimeSlime.png" },
+      { name: "Shelly",          tier: "Ethereal",     color: "#aadeff", BaseATK: 880,    BaseHP: 2640,    BaseRarity: 61500000,       image: "Slimes/shelly.png" },
+      { name: "Derpy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 1005,   BaseHP: 3150,    BaseRarity: 89700000,       image: "Slimes/derpy.png" },
+      { name: "Octo",            tier: "Ethereal",     color: "#aadeff", BaseATK: 1260,   BaseHP: 3780,    BaseRarity: 134000000,      image: "Slimes/octo.png" },
+      { name: "Puffy",           tier: "Ethereal",     color: "#aadeff", BaseATK: 1400,   BaseHP: 4200,    BaseRarity: 195000000,      image: "Slimes/puffy.png" },
+      { name: "Halo",            tier: "Ethereal",     color: "#aadeff", BaseATK: 1510,   BaseHP: 4500,    BaseRarity: 195500000,      image: "Slimes/halo.png" },
+      /* Secrets */
+      { name: "Bomber",          tier: "Secret",       color: "#ff4a4a", BaseATK: 1810,   BaseHP: 5430,    BaseRarity: 307000000,      image: "Slimes/bomber.png" },
+      { name: "UFO",             tier: "Secret",       color: "#ff4a4a", BaseATK: 2170,   BaseHP: 6510,    BaseRarity: 478000000,      image: "Slimes/ufo.png" },
+      { name: "Witchy",          tier: "Secret",       color: "#ff4a4a", BaseATK: 2600,   BaseHP: 7800,    BaseRarity: 718000000,      image: "Slimes/witchy.png" },
+      { name: "Blackhole",       tier: "Secret",       color: "#ff4a4a", BaseATK: 3120,   BaseHP: 9360,    BaseRarity: 1070000000,     image: "Slimes/blackHole.png" },
+      { name: "Ember",           tier: "Secret",       color: "#ff4a4a", BaseATK: 3740,   BaseHP: 11200,   BaseRarity: 1720000000,     image: "Slimes/ember.png" },
+      { name: "Astro",           tier: "Secret",       color: "#ff4a4a", BaseATK: 4100,   BaseHP: 12300,   BaseRarity: 2470000000,     image: "Slimes/astro.png" },
+      { name: "Pumpkin",         tier: "Secret",       color: "#ff4a4a", BaseATK: 4490,   BaseHP: 13500,   BaseRarity: 2770000000,     image: "Slimes/pumpkin.png" },
+      /* Celestials */
+      { name: "Ouchy",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 5400,   BaseHP: 16200,   BaseRarity: 4390000000,     image: "Slimes/ouchy.png" },
+      { name: "Sharky",          tier: "Celestial",    color: "#b6e8ff", BaseATK: 6500,   BaseHP: 19400,   BaseRarity: 6470000000,     image: "Slimes/sharky.png" },
+      { name: "Dino",            tier: "Celestial",    color: "#b6e8ff", BaseATK: 7800,   BaseHP: 23400,   BaseRarity: 10100000000,    image: "Slimes/dino.png" },
+      { name: "Sunny",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 8100,   BaseHP: 24300,   BaseRarity: 11800000000,    image: "Slimes/sunny.png" },
+      { name: "Monke",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 9360,   BaseHP: 28000,   BaseRarity: 15300000000,    image: "Slimes/monke.png" },
+      { name: "Prickly",         tier: "Celestial",    color: "#b6e8ff", BaseATK: 11200,  BaseHP: 33700,   BaseRarity: 23900000000,    image: "Slimes/prickly.png" },
+      { name: "Zoomy",           tier: "Celestial",    color: "#b6e8ff", BaseATK: 13400,  BaseHP: 40300,   BaseRarity: 34200000000,    image: "Slimes/zoomy.png" },
+      /* Astrals */
+      { name: "Waxie",           tier: "Astral",       color: "#4189e0", BaseATK: 16100,  BaseHP: 48200,   BaseRarity: 50100000000,    image: "Slimes/waxie.png" },
+      { name: "Drakey",          tier: "Astral",       color: "#4189e0", BaseATK: 19300,  BaseHP: 58000,   BaseRarity: 64700000000,    image: "Slimes/drakey.png" },
+      { name: "Germy",           tier: "Astral",       color: "#4189e0", BaseATK: 23100,  BaseHP: 70000,   BaseRarity: 113000000000,   image: "Slimes/germy.png" },
+      { name: "Palmy",           tier: "Astral",       color: "#4189e0", BaseATK: 27700,  BaseHP: 83000,   BaseRarity: 172000000000,   image: "Slimes/palmy.png" },
+      { name: "Melly",           tier: "Astral",       color: "#4189e0", BaseATK: 31000,  BaseHP: 93000,   BaseRarity: 237000000000,   image: "Slimes/melly.png" },
+      { name: "Snazzy",          tier: "Astral",       color: "#4189e0", BaseATK: 33200,  BaseHP: 100000,  BaseRarity: 269000000000,   image: "Slimes/snazzy.png" },
+      { name: "Bemmy",           tier: "Astral",       color: "#4189e0", BaseATK: 40000,  BaseHP: 120000,  BaseRarity: 414000000000,   image: "Slimes/bemmy.png" },
+      /* Novas */
+      { name: "Mato",            tier: "Nova",         color: "#db88d3", BaseATK: 48000,  BaseHP: 144000,  BaseRarity: 673000000000,   image: "Slimes/mato.png" },
+      { name: "Frosty",          tier: "Nova",         color: "#db88d3", BaseATK: 57600,  BaseHP: 172000,  BaseRarity: 1070000000000,  image: "Slimes/frosty.png" },
+      { name: "Pouchy",          tier: "Nova",         color: "#db88d3", BaseATK: 70000,  BaseHP: 210000,  BaseRarity: 1720000000000,  image: "Slimes/pouchy.png" },
+      { name: "Hoppity",         tier: "Nova",         color: "#db88d3", BaseATK: 84000,  BaseHP: 252000,  BaseRarity: 2690000000000,  image: "Slimes/hoppity.png" },
+      { name: "Sweetie",         tier: "Nova",         color: "#db88d3", BaseATK: 93000,  BaseHP: 279000,  BaseRarity: 3500000000000,  image: "Slimes/sweetie.png" },
+      { name: "Shady",           tier: "Nova",         color: "#db88d3", BaseATK: 100000, BaseHP: 300000,  BaseRarity: 3990000000000,  image: "Slimes/shady.png" },
+      { name: "Galaxy",          tier: "Nova",         color: "#db88d3", BaseATK: 120000, BaseHP: 360000,  BaseRarity: 6950000000000,  image: "Slimes/galaxy.png" },
+      /* Solars */
+      { name: "Painty",          tier: "Solar",        color: "#f5c842", BaseATK: 145000, BaseHP: 435000,  BaseRarity: 11300000000000, image: "Slimes/painty.png" },
+      { name: "Patty",           tier: "Solar",        color: "#f5c842", BaseATK: 174000, BaseHP: 522000,  BaseRarity: 18700000000000, image: "Slimes/patty.png" },
+      { name: "Broclee",         tier: "Solar",        color: "#f5c842", BaseATK: 210000, BaseHP: 630000,  BaseRarity: 28700000000000, image: "Slimes/broclee.png" },
+      { name: "Meaty",           tier: "Solar",        color: "#f5c842", BaseATK: 256000, BaseHP: 777000,  BaseRarity: 43000000000000, image: "Slimes/meaty.png" },
+      { name: "Zappy",           tier: "Solar",        color: "#f5c842", BaseATK: 308000, BaseHP: 924000,  BaseRarity: 67300000000000, image: "Slimes/zappy.png" },
+    ];
+
+    // --- Constants
+    const MUT_ORDER  = ["Shiny", "Big", "Huge", "Inverted"];
+    const SIZE_GROUP = new Set(["Big", "Huge"]);
+
+    // --- State
+    let MaxSlots        = 1;
+    let ActiveSlotIndex = null;
+    let PendingSlime    = null;
+    let ActiveMutations = new Set();
+
+    const SlotData = Array(8).fill(null);
+
+    // --- Navigation
+    function NavigateTo(PageID) {
+      const HomePage         = document.getElementById('home-page');
+      const SlimeTeamPage    = document.getElementById('page-slime-team');
+      const CompareStatsPage = document.getElementById('page-compare-stats');
+      const LuckCalcPage     = document.getElementById('page-luck-calc');
+      const FoodCalcPage     = document.getElementById('page-food-calc');
+
+      HomePage.style.display = 'none';
+      SlimeTeamPage.classList.remove('active');
+      CompareStatsPage.classList.remove('active');
+      LuckCalcPage.classList.remove('active');
+      FoodCalcPage.classList.remove('active');
+
+      if (PageID === 'home') {
+        HomePage.style.display = 'block';
+        CloseInventory();
+      } else if (PageID === 'slime-team') {
+        SlimeTeamPage.classList.add('active');
+        RenderSlots();
+      } else if (PageID === 'compare-stats') {
+        CompareStatsPage.classList.add('active');
+        RenderCompareInventory('a');
+        RenderCompareInventory('b');
+      } else if (PageID === 'luck-calc') {
+        LuckCalcPage.classList.add('active');
+        RenderLuckFactors();
+        RenderRollingMultis();
+        UpdateServerLuckDisplay();
+        CalcTotalLuck();
+      } else if (PageID === 'food-calc') {
+        FoodCalcPage.classList.add('active');
+        RenderFoodInventory();
+        RenderFoodInputs();
+        CalcFoodResult();
+      }
+    }
+
+    // --- Mutation helpers
+
+    function OrderedMutations(MutSet) {
+      return MUT_ORDER.filter(m => MutSet.has(m));
+    }
+
+    function MutLabel(MutSet) {
+      const ordered = OrderedMutations(MutSet);
+      return ordered.length ? ordered.join(' ') : '';
+    }
+
+    function GetStatMulti(MutSet) {
+      return STAT_MULTIS[MutLabel(MutSet)] ?? 1;
+    }
+
+    function GetRarityMulti(MutSet) {
+      return RARITY_MULTIS[MutLabel(MutSet)] ?? 1;
+    }
+
+    // --- Stat formulas
+
+    function CalcATK(slime, MutSet, level) {
+      const multi = GetStatMulti(MutSet);
+      return Math.round((slime.BaseATK / 10) * (9 + level) * multi);
+    }
+
+    function CalcHP(slime, MutSet, level) {
+      const multi = GetStatMulti(MutSet);
+      return Math.round((slime.BaseHP / 10) * (9 + level) * multi);
+    }
+
+    function CalcRarity(slime, MutSet) {
+      return slime.BaseRarity * GetRarityMulti(MutSet);
+    }
+
+    // --- Formatting
+
+    function FormatNum(n) {
+      if (n >= 1e21) return (n / 1e21).toFixed(2).replace(/\.?0+$/, '') + 'Sx';
+      if (n >= 1e18) return (n / 1e18).toFixed(2).replace(/\.?0+$/, '') + 'Qn';
+      if (n >= 1e15) return (n / 1e15).toFixed(2).replace(/\.?0+$/, '') + 'Qd';
+      if (n >= 1e12) return (n / 1e12).toFixed(2).replace(/\.?0+$/, '') + 'T';
+      if (n >= 1e9)  return (n / 1e9 ).toFixed(2).replace(/\.?0+$/, '') + 'B';
+      if (n >= 1e6)  return (n / 1e6 ).toFixed(2).replace(/\.?0+$/, '') + 'M';
+      if (n >= 1e3)  return (n / 1e3 ).toFixed(2).replace(/\.?0+$/, '') + 'K';
+      return Math.round(n).toLocaleString();
+    }
+
+    function FormatRarity(n) {
+      return '1 / ' + FormatNum(n);
+    }
+
+    // --- Level helper
+
+    function GetPendingLevel() {
+      const val = parseInt(document.getElementById('pending-level-input').value) || 1;
+      return Math.max(1, Math.min(250, val));
+    }
+
+    // --- Fuzzy search
+
+    function FuzzyScore(query, target) {
+      query = query.toLowerCase(); target = target.toLowerCase();
+      if (target.includes(query)) return 1000 + (1000 - target.indexOf(query));
+      let qi = 0, score = 0, lastMatch = -1;
+      for (let ti = 0; ti < target.length && qi < query.length; ti++) {
+        if (target[ti] === query[qi]) { score += 10 - (ti - lastMatch - 1); lastMatch = ti; qi++; }
+      }
+      return qi === query.length ? score : -1;
+    }
+
+    // --- Level input handler
+
+    function OnPendingLevelChange() {
+      if (PendingSlime) UpdateStatPreview();
+    }
+
+    // --- Team stats
+
+    function UpdateTeamStats() {
+      let TotalATK = 0, TotalHP = 0, HasAny = false;
+      for (let i = 0; i < MaxSlots; i++) {
+        const data = SlotData[i];
+        if (!data) continue;
+        HasAny = true;
+        const MutSet = new Set(data.mutations || []);
+        TotalATK += CalcATK(data, MutSet, data.level || 1);
+        TotalHP  += CalcHP(data, MutSet, data.level || 1);
+      }
+      document.getElementById('team-total-atk').textContent = HasAny ? FormatNum(TotalATK) : '—';
+      document.getElementById('team-total-hp').textContent  = HasAny ? FormatNum(TotalHP)  : '—';
+    }
+
+    // --- Slot constrols
+
+    function ChangeSlots(delta) {
+      const prev = MaxSlots;
+      MaxSlots = Math.max(1, Math.min(8, MaxSlots + delta));
+      if (MaxSlots < prev) {
+        for (let i = MaxSlots; i < prev; i++) SlotData[i] = null;
+      }
+      document.getElementById('slot-count').textContent = MaxSlots;
+      document.getElementById('btn-minus').disabled     = MaxSlots <= 1;
+      document.getElementById('btn-plus').disabled      = MaxSlots >= 8;
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
+
+    function UpdateEquippedLabel() {
+      const equipped = SlotData.slice(0, MaxSlots).filter(Boolean).length;
+      document.getElementById('equipped-label').textContent = equipped + ' / ' + MaxSlots + ' Equipped';
+    }
+
+    function ClearTeam() {
+      for (let i = 0; i < 8; i++) SlotData[i] = null;
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
+
+    // --- Slot rendering
+
+    function RenderSlots() {
+      const grid = document.getElementById('slots-grid');
+      grid.innerHTML = '';
+      for (let i = 0; i < MaxSlots; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'slot';
+        const data = SlotData[i];
+        if (data) {
+          slot.style.borderStyle = 'solid';
+          slot.style.borderColor = data.color;
+          slot.style.background  = '#1a1636';
+
+          const MutSet   = new Set(data.mutations || []);
+          const label    = MutLabel(MutSet);
+          const FullName = label ? label + ' ' + data.name : data.name;
+          const SlotLvl  = data.level || 1;
+          const atk      = CalcATK(data, MutSet, SlotLvl);
+          const hp       = CalcHP(data, MutSet, SlotLvl);
+          const Rarity   = CalcRarity(data, MutSet);
+
+          slot.innerHTML = `
+            ${data.image ? `<img class="slot-img" src="${data.image}" alt="${data.name}" />` : ''}
+            <span class="slot-name" style="color:${data.color}">${data.name}</span>
+            <span class="slot-tier">${data.tier}</span>
+            ${label ? `<span class="slot-mut">${label}</span>` : ''}
+            <span class="slot-level">Lv. ${SlotLvl}</span>
+            <div class="slot-tooltip">
+              <div class="tooltip-fullname">${FullName}</div>
+              <div class="tooltip-rarity">${FormatRarity(Rarity)}</div>
+              <div class="tooltip-tier" style="color:${data.color}">${data.tier}</div>
+              <div class="tooltip-divider"></div>
+              <div class="tooltip-stat">💪 ${FormatNum(atk)}</div>
+              <div class="tooltip-stat">❤️ ${FormatNum(hp)}</div>
+              <div class="tooltip-level">Level ${SlotLvl}</div>
+            </div>
+          `;
+        } else {
+          slot.innerHTML = `
+            <div class="slot-plus"><span class="slot-plus-icon">+</span></div>
+            <span class="slot-empty-label">Empty Slot</span>
+          `;
+        }
+        const idx = i;
+        slot.onclick = () => OpenInventory(idx);
+        grid.appendChild(slot);
+      }
+      UpdateTeamStats();
+    }
+
+    // --- Inventory
+
+    function OpenInventory(SlotIndex) {
+      ActiveSlotIndex = SlotIndex;
+      PendingSlime    = null;
+      ActiveMutations.clear();
+      document.getElementById('pending-level-input').value = SlotData[SlotIndex]?.level || 1;
+      const section = document.getElementById('inv-section');
+      section.classList.add('open');
+      document.getElementById('inv-search').value = '';
+      document.getElementById('mut-panel').classList.remove('visible');
+      RenderInventory();
+      RenderMutPanel();
+      setTimeout(() => section.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 50);
+    }
+
+    function CloseInventory() {
+      document.getElementById('inv-section').classList.remove('open');
+      ActiveSlotIndex = null;
+      PendingSlime    = null;
+      ActiveMutations.clear();
+    }
+
+    function RenderInventory() {
+      const query = document.getElementById('inv-search').value.trim();
+      const grid  = document.getElementById('inv-grid');
+      grid.innerHTML = '';
+      let results = slimes
+        .map(s => ({ slime: s, score: query ? FuzzyScore(query, s.name) : 0 }))
+        .filter(r => r.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map(r => r.slime);
+      if (results.length === 0) {
+        grid.innerHTML = '<div class="inv-no-results">No Slimes Found</div>';
+        return;
+      }
+      results.forEach(s => {
+        const card = document.createElement('div');
+        card.className = 'inv-card' + (PendingSlime && PendingSlime.name === s.name ? ' selected' : '');
+        card.innerHTML = `
+          ${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}
+          <span class="inv-card-name">${s.name}</span>
+          <span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>
+        `;
+        card.onclick = () => SelectPending(s);
+        grid.appendChild(card);
+      });
+    }
+
+    // --- Mutation panel
+
+    function SelectPending(slime) {
+      PendingSlime = slime;
+      ActiveMutations.clear();
+      document.getElementById('mut-panel').classList.add('visible');
+      document.getElementById('mut-slime-name').textContent = slime.name;
+      RenderMutPanel();
+      UpdateStatPreview();
+      RenderInventory();
+    }
+
+    function RenderMutPanel() {
+      const container = document.getElementById('mut-tags');
+      container.innerHTML = '';
+
+      const CurrentSize = [...ActiveMutations].find(m => SIZE_GROUP.has(m)) || null;
+      const atMax       = ActiveMutations.size >= 3;
+
+      MUT_ORDER.forEach(m => {
+        const isActive      = ActiveMutations.has(m);
+        const ConflictsSize = SIZE_GROUP.has(m) && CurrentSize && CurrentSize !== m;
+        const isDisabled    = (!isActive && atMax) || ConflictsSize;
+
+        const btn = document.createElement('button');
+        btn.className = 'mut-tag' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
+        btn.textContent = m;
+        btn.onclick = () => {
+          if (isDisabled) return;
+          if (isActive) ActiveMutations.delete(m);
+          else ActiveMutations.add(m);
+          RenderMutPanel();
+          UpdateStatPreview();
+        };
+        container.appendChild(btn);
+      });
+
+      const preview = MutLabel(ActiveMutations);
+      document.getElementById('mut-preview').textContent = preview ? preview : 'No Mutations';
+    }
+
+    // --- Stat preview
+
+    function UpdateStatPreview() {
+      if (!PendingSlime) return;
+      const level  = GetPendingLevel();
+      const atk    = CalcATK(PendingSlime, ActiveMutations, level);
+      const hp     = CalcHP(PendingSlime, ActiveMutations, level);
+      const Rarity = CalcRarity(PendingSlime, ActiveMutations);
+      document.getElementById('preview-atk').textContent    = '💪 ' + FormatNum(atk);
+      document.getElementById('preview-hp').textContent     = '❤️ ' + FormatNum(hp);
+      document.getElementById('preview-rarity').textContent = FormatRarity(Rarity);
+    }
+
+    // --- Apply slime
+
+    function ApplySlime() {
+      if (ActiveSlotIndex === null || !PendingSlime) return;
+      SlotData[ActiveSlotIndex] = {
+        ...PendingSlime,
+        mutations: OrderedMutations(ActiveMutations),
+        level: GetPendingLevel(),
+      };
+      UpdateEquippedLabel();
+      RenderSlots();
+      CloseInventory();
+    }
+    // --- Compare Stats State
+    const CompareState = {
+      a: { slime: null, mutations: new Set(), level: 1 },
+      b: { slime: null, mutations: new Set(), level: 1 },
+    };
+
+    function RenderCompareInventory(side) {
+      const query = document.getElementById(`cmp-search-${side}`).value.trim();
+      const grid  = document.getElementById(`cmp-grid-${side}`);
+      grid.innerHTML = '';
+      let results = slimes
+        .map(s => ({ slime: s, score: query ? FuzzyScore(query, s.name) : 0 }))
+        .filter(r => r.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map(r => r.slime);
+      if (results.length === 0) {
+        grid.innerHTML = '<div class="inv-no-results">No Slimes Found</div>';
+        return;
+      }
+      results.forEach(s => {
+        const card = document.createElement('div');
+        const sel  = CompareState[side].slime && CompareState[side].slime.name === s.name;
+        card.className = 'inv-card' + (sel ? ' selected' : '');
+        card.innerHTML = `${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
+        card.onclick = () => SelectCompareSlime(side, s);
+        grid.appendChild(card);
+      });
+    }
+
+    function SelectCompareSlime(side, slime) {
+      CompareState[side].slime = slime;
+      CompareState[side].mutations.clear();
+      CompareState[side].level = 1;
+      document.getElementById(`cmp-level-${side}`).value = 1;
+      RenderCompareInventory(side);
+      RenderCompareMuts(side);
+      UpdateCompareStats();
+    }
+
+    function RenderCompareMuts(side) {
+      const container = document.getElementById(`cmp-muts-${side}`);
+      container.innerHTML = '';
+      if (!CompareState[side].slime) return;
+      const MutSet      = CompareState[side].mutations;
+      const CurrentSize = [...MutSet].find(m => SIZE_GROUP.has(m)) || null;
+      const atMax       = MutSet.size >= 3;
+      MUT_ORDER.forEach(m => {
+        const isActive      = MutSet.has(m);
+        const ConflictsSize = SIZE_GROUP.has(m) && CurrentSize && CurrentSize !== m;
+        const isDisabled    = (!isActive && atMax) || ConflictsSize;
+        const btn = document.createElement('button');
+        btn.className   = 'mut-tag' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
+        btn.textContent = m;
+        btn.onclick = () => {
+          if (isDisabled) return;
+          if (isActive) MutSet.delete(m); else MutSet.add(m);
+          RenderCompareMuts(side);
+          UpdateCompareStats();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function OnCompareLevelChange(side) {
+      const val = parseInt(document.getElementById(`cmp-level-${side}`).value) || 1;
+      CompareState[side].level = Math.max(1, Math.min(250, val));
+      UpdateCompareStats();
+    }
+
+    function UpdateCompareStats() {
+      const calcSide = side => {
+        const { slime, mutations, level } = CompareState[side];
+        if (!slime) return null;
+        const mutLabel = MutLabel(mutations);
+        return {
+          atk:    CalcATK(slime, mutations, level),
+          hp:     CalcHP(slime, mutations, level),
+          rarity: CalcRarity(slime, mutations),
+          label:  (mutLabel ? mutLabel + ' ' : '') + slime.name,
+          color:  slime.color,
+          tier:   slime.tier,
+          level,
+        };
+      };
+      const A = calcSide('a'), B = calcSide('b');
+
+      ['a', 'b'].forEach(side => {
+        const s = side === 'a' ? A : B;
+        const nameEl = document.getElementById(`cmp-selected-name-${side}`);
+        if (!s) {
+          nameEl.innerHTML = 'No slime selected';
+          ['atk', 'hp', 'rar'].forEach(stat => {
+            const valEl  = document.getElementById(`cmp-stat-${stat}-${side}`);
+            const diffEl = document.getElementById(`cmp-diff-${stat}-${side}`);
+            valEl.textContent  = '—';
+            valEl.className    = 'compare-stat-value';
+            diffEl.textContent = '';
+            diffEl.className   = 'compare-stat-diff';
+          });
+          return;
+        }
+        nameEl.innerHTML = `<span style="color:${s.color};font-weight:700">${s.label}</span><span style="font-size:10px;color:#5a5080;margin-left:6px">${s.tier} · Lv.${s.level}</span>`;
+        document.getElementById(`cmp-stat-atk-${side}`).textContent = FormatNum(s.atk);
+        document.getElementById(`cmp-stat-hp-${side}`).textContent  = FormatNum(s.hp);
+        document.getElementById(`cmp-stat-rar-${side}`).textContent = FormatRarity(s.rarity);
+      });
+
+      if (!A || !B) {
+        ['a', 'b'].forEach(side => ['atk', 'hp', 'rar'].forEach(stat => {
+          document.getElementById(`cmp-stat-${stat}-${side}`).className = 'compare-stat-value';
+          const diffEl = document.getElementById(`cmp-diff-${stat}-${side}`);
+          diffEl.textContent = '';
+          diffEl.className   = 'compare-stat-diff';
+        }));
+        return;
+      }
+
+      [
+        { stat: 'atk', aVal: A.atk,    bVal: B.atk    },
+        { stat: 'hp',  aVal: A.hp,     bVal: B.hp     },
+        { stat: 'rar', aVal: A.rarity, bVal: B.rarity },
+      ].forEach(({ stat, aVal, bVal }) => {
+        const valElA  = document.getElementById(`cmp-stat-${stat}-a`);
+        const valElB  = document.getElementById(`cmp-stat-${stat}-b`);
+        const diffElA = document.getElementById(`cmp-diff-${stat}-a`);
+        const diffElB = document.getElementById(`cmp-diff-${stat}-b`);
+        const diff    = Math.abs(aVal - bVal);
+
+        if (aVal === bVal) {
+          valElA.className = valElB.className = 'compare-stat-value';
+          diffElA.textContent = diffElB.textContent = '= Tied';
+          diffElA.className   = diffElB.className   = 'compare-stat-diff compare-diff-tie';
+        } else if (aVal > bVal) {
+          valElA.className  = 'compare-stat-value';
+          valElB.className  = 'compare-stat-value compare-stat-lose';
+          diffElA.textContent = `↑ +${FormatNum(diff)}`;
+          diffElB.textContent = `↓ −${FormatNum(diff)}`;
+          diffElA.className   = 'compare-stat-diff compare-diff-win';
+          diffElB.className   = 'compare-stat-diff compare-diff-lose';
+        } else {
+          valElA.className  = 'compare-stat-value compare-stat-lose';
+          valElB.className  = 'compare-stat-value';
+          diffElA.textContent = `↓ −${FormatNum(diff)}`;
+          diffElB.textContent = `↑ +${FormatNum(diff)}`;
+          diffElA.className   = 'compare-stat-diff compare-diff-lose';
+          diffElB.className   = 'compare-stat-diff compare-diff-win';
+        }
+      });
+    }
+
+    // --- Luck Calculator
+    const LuckFactors = [
+      { id: 'zone',      name: 'Zone Luck',   alwaysOn: true, constant: false, value: 0, min: 0, max: 38  },
+      { id: 'upgrades',  name: 'Upgrades',    alwaysOn: true, constant: false, value: 0, min: 0, max: 10   },
+      { id: 'rolls',     name: 'Lucky Rolls', gamepass: true, constant: true,  value: 1,  enabled: false },
+      { id: 'vip',       name: 'VIP',         gamepass: true, constant: true,  value: 0.5, enabled: false },
+      { id: 'friends',   name: 'Friends',     alwaysOn: true, constant: false, value: 0, min: 0, max: 18  },
+      { id: 'likegroup', name: 'Like/Group',  constant: true,  value: 1, enabled: false },
+      { id: 'boosts',    name: 'Boosts',      alwaysOn: true, constant: false, value: 0, min: 0, max: 3   },
+      { id: 'index',     name: 'Index',       alwaysOn: true, constant: false, value: 0, min: 0, max: 4   },
+    ];
+
+    const ROLL_MULTIS = [
+      { id: 'none',    label: 'None',        multi: 1    },
+      { id: 'golden',  label: 'Golden Roll',  multi: 4    },
+      { id: 'diamond', label: 'Diamond Roll', multi: 45   },
+      { id: 'void',    label: 'Void Roll',    multi: 435  },
+      { id: 'galaxy',  label: 'Galaxy Roll',  multi: 2165 },
+    ];
+
+    const LuckMultis = {
+      globalLuck:  { enabled: false, value: 1 },
+      server:      { level: 0 },
+      rebirths:    { value: 1 },
+      indexMul:    { value: 1 },
+      rollingMulti: { selected: 'none' },
+      jackpot:      { enabled: false },
+    };
+
+    function FormatLuck(n) {
+      if (n >= 1e3) return FormatNum(n);
+      return n.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function FormatLuckTotal(n) {
+      const tiers = [
+        [1e21, 'Sx'], [1e18, 'Qn'], [1e15, 'Qd'],
+        [1e12, 'T'],  [1e9,  'B'],  [1e6,  'M'],  [1e3, 'K'],
+      ];
+      for (const [base, suffix] of tiers) {
+        if (n >= base) {
+          const val = n / base;
+          const digits = val >= 100 ? 1 : val >= 10 ? 2 : 3;
+          return val.toFixed(digits).replace(/\.?0+$/, '') + suffix;
+        }
+      }
+      return n.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function RenderLuckFactors() {
+      const grid = document.getElementById('luck-factors-grid');
+      grid.innerHTML = '';
+      LuckFactors.forEach(f => {
+        const card = document.createElement('div');
+        card.id = `luck-card-${f.id}`;
+        card.className = 'luck-card' + ((f.alwaysOn || f.enabled) ? ' active' : '');
+        const toggleEl = f.alwaysOn
+          ? ``
+          : `<button class="luck-toggle${f.enabled ? ' active' : ''}" id="luck-toggle-${f.id}" onclick="ToggleLuckFactor('${f.id}')">${f.enabled ? '✓' : ''}</button>`;
+        const nameRow = f.gamepass
+          ? `<div class="luck-card-name-row"><span class="luck-card-name">${f.name}</span><span class="luck-gamepass-tag">Gamepass</span></div>`
+          : `<div class="luck-card-name">${f.name}</div>`;
+        const rightEl = f.constant
+          ? `<span class="luck-const-val">+${f.value}</span>`
+          : `<div class="luck-input-wrap"><span class="luck-prefix">+</span><input type="number" class="luck-input" id="luck-input-${f.id}" min="${f.min}" max="${f.max}" step="1" value="${f.value}" oninput="OnLuckInput('${f.id}')" /></div>`;
+        card.innerHTML = `
+          <div class="luck-card-left">
+            ${toggleEl}
+            <div>${nameRow}</div>
+          </div>
+          ${rightEl}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function ToggleLuckFactor(id) {
+      const f = LuckFactors.find(x => x.id === id);
+      f.enabled = !f.enabled;
+      document.getElementById(`luck-card-${id}`).classList.toggle('active', f.enabled);
+      const toggle = document.getElementById(`luck-toggle-${id}`);
+      toggle.classList.toggle('active', f.enabled);
+      toggle.textContent = f.enabled ? '✓' : '';
+      CalcTotalLuck();
+    }
+
+    function OnLuckInput(id) {
+      const f = LuckFactors.find(x => x.id === id);
+      const raw = parseFloat(document.getElementById(`luck-input-${id}`).value) || 0;
+      f.value = Math.max(f.min ?? 0, Math.min(f.max ?? raw, raw));
+      CalcTotalLuck();
+    }
+
+    function StepServerLuck(delta) {
+      LuckMultis.server.level = Math.max(0, Math.min(15, LuckMultis.server.level + delta));
+      UpdateServerLuckDisplay();
+      CalcTotalLuck();
+    }
+
+    function UpdateServerLuckDisplay() {
+      const lvl = LuckMultis.server.level;
+      document.getElementById('luck-server-val').textContent = '×' + FormatNum(Math.pow(2, lvl));
+      document.getElementById('luck-server-minus').disabled  = lvl <= 0;
+      document.getElementById('luck-server-plus').disabled   = lvl >= 15;
+    }
+
+    function ParseShorthand(raw) {
+      const s = raw.trim().toUpperCase();
+      const suffixes = { K: 1e3, M: 1e6, B: 1e9, T: 1e12 };
+      const match = s.match(/^([\d.]+)\s*([KMBT])?$/);
+      if (!match) return NaN;
+      const num = parseFloat(match[1]);
+      const mult = suffixes[match[2]] || 1;
+      return num * mult;
+    }
+
+    function OnRebirthsInput() {
+      const raw = document.getElementById('luck-rebirths-input').value;
+      const parsed = ParseShorthand(raw);
+      LuckMultis.rebirths.value = (isNaN(parsed) || parsed < 1) ? 1 : parsed;
+      CalcTotalLuck();
+    }
+
+    function OnIndexMultiInput() {
+      LuckMultis.indexMul.value = parseFloat(document.getElementById('luck-idxpct-input').value) || 1;
+      CalcTotalLuck();
+    }
+
+    function ToggleGlobalLuck() {
+      LuckMultis.globalLuck.enabled = !LuckMultis.globalLuck.enabled;
+      const on = LuckMultis.globalLuck.enabled;
+      document.getElementById('luck-card-globalluck').classList.toggle('active', on);
+      const toggle = document.getElementById('luck-toggle-globalluck');
+      toggle.classList.toggle('active', on);
+      toggle.textContent = on ? '✓' : '';
+      document.getElementById('luck-globalluck-input').disabled = !on;
+      CalcTotalLuck();
+    }
+
+    function OnGlobalLuckInput() {
+      LuckMultis.globalLuck.value = parseFloat(document.getElementById('luck-globalluck-input').value) || 1;
+      CalcTotalLuck();
+    }
+
+    function RenderRollingMultis() {
+      const list = document.getElementById('luck-rolling-list');
+      list.innerHTML = '';
+      ROLL_MULTIS.forEach(r => {
+        const isNone = r.id === 'none';
+        const sel = LuckMultis.rollingMulti.selected === r.id;
+        const card = document.createElement('div');
+        card.className = 'luck-card' + (sel && !isNone ? ' active' : isNone && sel ? '' : '');
+        if (sel && !isNone) card.classList.add('active');
+        card.innerHTML = `
+          <div class="luck-card-left">
+            <button class="luck-toggle${sel ? ' active' : ''}" onclick="SelectRollingMulti('${r.id}')">${sel ? '✓' : ''}</button>
+            <div class="luck-card-name">${r.label}</div>
+          </div>
+          <span class="luck-const-val" style="color:${sel && !isNone ? '#a090d0' : '#3a3460'}">×${r.multi}</span>
+        `;
+        card.onclick = (e) => { if (e.target.tagName !== 'BUTTON') SelectRollingMulti(r.id); };
+        list.appendChild(card);
+      });
+    }
+
+    function SelectRollingMulti(id) {
+      LuckMultis.rollingMulti.selected = id;
+      RenderRollingMultis();
+      CalcTotalLuck();
+    }
+
+    function ToggleJackpot() {
+      LuckMultis.jackpot.enabled = !LuckMultis.jackpot.enabled;
+      const on = LuckMultis.jackpot.enabled;
+      document.getElementById('luck-card-jackpot').classList.toggle('active', on);
+      const toggle = document.getElementById('luck-toggle-jackpot');
+      toggle.classList.toggle('active', on);
+      toggle.textContent = on ? '✓' : '';
+      document.getElementById('luck-jackpot-val').style.color = on ? '#a090d0' : '#3a3460';
+      CalcTotalLuck();
+    }
+
+    function CalcTotalLuck() {
+      let additive = 0;
+      const factorLines = [];
+      LuckFactors.forEach(f => {
+        const on = f.alwaysOn || f.enabled;
+        if (on) additive += f.value;
+        if (on && f.value > 0) {
+          factorLines.push(`<div class="luck-breakdown-row"><span>${f.name}</span><span class="luck-breakdown-val">+${FormatLuck(f.value)}</span></div>`);
+        }
+      });
+
+      const globalMulti  = LuckMultis.globalLuck.enabled ? (LuckMultis.globalLuck.value || 1) : 1;
+      const serverMulti  = Math.pow(2, LuckMultis.server.level);
+      const rebirthMulti = LuckMultis.rebirths.value || 1;
+      const idxMulti     = LuckMultis.indexMul.value || 1;
+      const rollSel      = ROLL_MULTIS.find(r => r.id === LuckMultis.rollingMulti.selected) || ROLL_MULTIS[0];
+      const rollMulti    = rollSel.multi;
+      const jackpotMulti = LuckMultis.jackpot.enabled ? 1000 : 1;
+      const totalMulti   = globalMulti * serverMulti * rebirthMulti * idxMulti * rollMulti * jackpotMulti;
+
+      const globalRow = LuckMultis.globalLuck.enabled
+        ? `<div class="luck-breakdown-row"><span>Global Luck</span><span class="luck-breakdown-val">×${FormatLuck(globalMulti)}</span></div>`
+        : '';
+      const rollRow = rollSel.id !== 'none'
+        ? `<div class="luck-breakdown-row"><span>${rollSel.label}</span><span class="luck-breakdown-val">×${FormatLuck(rollMulti)}</span></div>`
+        : '';
+      const jackpotRow = LuckMultis.jackpot.enabled
+        ? `<div class="luck-breakdown-row"><span>Jackpot Roll</span><span class="luck-breakdown-val">×1000</span></div>`
+        : '';
+
+      document.getElementById('luck-result-rows').innerHTML = `
+        <div class="luck-breakdown-section">Additive Factors</div>
+        <div class="luck-breakdown-list">${factorLines.join('')}</div>
+        <div class="luck-result-divider"></div>
+        <div class="luck-breakdown-section">Multipliers</div>
+        <div class="luck-breakdown-list">
+          ${globalRow}
+          <div class="luck-breakdown-row"><span>Server Luck</span><span class="luck-breakdown-val">×${FormatLuck(serverMulti)}</span></div>
+          <div class="luck-breakdown-row"><span>Rebirths</span><span class="luck-breakdown-val">×${FormatLuck(rebirthMulti)}</span></div>
+          <div class="luck-breakdown-row"><span>Index ×</span><span class="luck-breakdown-val">×${FormatLuck(idxMulti)}</span></div>
+          ${rollRow}
+          ${jackpotRow}
+        </div>
+        <div class="luck-result-divider"></div>
+        <div class="luck-result-row">
+          <span class="luck-result-total-label">Total Luck</span>
+          <span class="luck-result-total-val">${FormatLuckTotal(additive * totalMulti)}</span>
+        </div>
+      `;
+    }
+
+    // --- Food Calculator
+    const Foods = [
+      { icon: '🍎', name: 'Apple',      xp: 75  },
+      { icon: '🥕', name: 'Carrot',     xp: 100 },
+      { icon: '🍒', name: 'Cherries',   xp: 125 },
+      { icon: '🍇', name: 'Grapes',     xp: 150 },
+      { icon: '🍌', name: 'Banana',     xp: 175 },
+      { icon: '🍉', name: 'Watermelon', xp: 200 },
+      { icon: '🍕', name: 'Pizza',      xp: 225 },
+      { icon: '🍗', name: 'Chicken',    xp: 250 },
+      { icon: '🍖', name: 'Drumstick',  xp: 275 },
+    ];
+
+    const FoodCalcState = { slime: null, mutations: new Set() };
+
+    function RenderFoodInventory() {
+      const query = document.getElementById('food-slime-search').value.trim();
+      const grid  = document.getElementById('food-slime-grid');
+      grid.innerHTML = '';
+      const results = slimes
+        .map(s => ({ slime: s, score: query ? FuzzyScore(query, s.name) : 0 }))
+        .filter(r => r.score >= 0)
+        .sort((a, b) => b.score - a.score)
+        .map(r => r.slime);
+      if (!results.length) {
+        grid.innerHTML = '<div class="inv-no-results">No Slimes Found</div>';
+        return;
+      }
+      results.forEach(s => {
+        const card = document.createElement('div');
+        const sel  = FoodCalcState.slime && FoodCalcState.slime.name === s.name;
+        card.className = 'inv-card' + (sel ? ' selected' : '');
+        card.innerHTML = `${s.image ? `<img class="inv-card-img" src="${s.image}" alt="${s.name}" />` : ''}<span class="inv-card-name">${s.name}</span><span class="inv-card-tier" style="color:${s.color}">${s.tier}</span>`;
+        card.onclick = () => {
+          FoodCalcState.slime = s;
+          FoodCalcState.mutations.clear();
+          document.getElementById('food-slime-name').textContent = s.name;
+          document.getElementById('food-start-level').value = 1;
+          RenderFoodInventory();
+          RenderFoodMuts();
+          CalcFoodResult();
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function RenderFoodMuts() {
+      const container = document.getElementById('food-muts');
+      container.innerHTML = '';
+      if (!FoodCalcState.slime) return;
+      const MutSet      = FoodCalcState.mutations;
+      const CurrentSize = [...MutSet].find(m => SIZE_GROUP.has(m)) || null;
+      const atMax       = MutSet.size >= 3;
+      MUT_ORDER.forEach(m => {
+        const isActive      = MutSet.has(m);
+        const ConflictsSize = SIZE_GROUP.has(m) && CurrentSize && CurrentSize !== m;
+        const isDisabled    = (!isActive && atMax) || ConflictsSize;
+        const btn = document.createElement('button');
+        btn.className = 'mut-tag' + (isActive ? ' active' : '') + (isDisabled ? ' disabled' : '');
+        btn.textContent = m;
+        btn.onclick = () => {
+          if (isDisabled) return;
+          if (isActive) MutSet.delete(m); else MutSet.add(m);
+          RenderFoodMuts();
+          CalcFoodResult();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function RenderFoodInputs() {
+      const list = document.getElementById('food-qty-list');
+      list.innerHTML = '';
+      Foods.forEach(f => {
+        const row = document.createElement('div');
+        row.className = 'food-qty-row';
+        row.innerHTML = `
+          <div class="food-qty-left">
+            <span class="food-qty-icon">${f.icon}</span>
+            <div>
+              <div class="food-qty-name">${f.name}</div>
+              <div class="food-qty-xp">${f.xp} XP each</div>
+            </div>
+          </div>
+          <input type="number" class="food-qty-input" id="food-qty-${f.name}" min="0" value="0" oninput="CalcFoodResult()" />
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    function CalcFoodResult() {
+      const totalXP = Foods.reduce((sum, f) => {
+        const qty = parseInt(document.getElementById(`food-qty-${f.name}`)?.value) || 0;
+        return sum + qty * f.xp;
+      }, 0);
+
+      const startLevel = Math.max(1, Math.min(249, parseInt(document.getElementById('food-start-level')?.value) || 1));
+      let level = startLevel;
+      let remaining = totalXP;
+      while (level < 250) {
+        const needed = level * 100;
+        if (remaining < needed) break;
+        remaining -= needed;
+        level++;
+      }
+
+      const out = document.getElementById('food-result-rows');
+      if (!FoodCalcState.slime) {
+        out.innerHTML = `<div class="food-result-empty">Select a slime to see results.</div>`;
+        return;
+      }
+
+      const xpUsed = totalXP - remaining;
+      const atk = CalcATK(FoodCalcState.slime, FoodCalcState.mutations, level);
+      const hp  = CalcHP(FoodCalcState.slime,  FoodCalcState.mutations, level);
+      const maxed = level >= 250;
+
+      out.innerHTML = `
+        <div class="luck-breakdown-section" style="margin-bottom:6px">Level reached</div>
+        <div class="food-result-level-row">
+          <span class="food-result-level-val">${level}</span>
+          <span class="food-result-level-label" style="text-align:right">from ${startLevel}</span>
+        </div>
+        ${maxed ? `<div class="food-result-level-from" style="color:#4ade80">Max level reached!</div>` : `<div class="food-result-level-from">${FormatNum(remaining)} XP short of level ${level + 1}</div>`}
+        <div class="luck-result-divider" style="margin:10px 0"></div>
+        <div class="luck-breakdown-section" style="margin-bottom:6px">Stats at level ${level}</div>
+        <div class="luck-result-row">
+          <span class="luck-result-label">💪 ATK</span>
+          <span class="luck-result-val" style="color:#ffaa44">${FormatNum(atk)}</span>
+        </div>
+        <div class="luck-result-row">
+          <span class="luck-result-label">❤️ HP</span>
+          <span class="luck-result-val" style="color:#ff7070">${FormatNum(hp)}</span>
+        </div>
+        <div class="luck-result-divider" style="margin:10px 0"></div>
+        <div class="luck-result-row">
+          <span class="luck-result-label" style="color:#383858">Total XP</span>
+          <span style="font-size:12px;color:#484868;font-weight:600">${FormatNum(xpUsed)} used</span>
+        </div>
+      `;
+    }
+
+    // --- Init
+    ChangeSlots(0);
+  </script>
+</body>
+</html>
