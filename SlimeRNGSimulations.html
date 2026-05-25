@@ -812,7 +812,7 @@
                 </div>
                 <div class="luck-input-wrap">
                   <span class="luck-prefix">×</span>
-                  <input type="number" class="luck-input luck-input-lg" id="luck-rebirths-input" min="1" step="0.1" value="1" oninput="OnRebirthsInput()" />
+                  <input type="text" class="luck-input luck-input-lg" id="luck-rebirths-input" value="1" oninput="OnRebirthsInput()" />
                 </div>
               </div>
               <div class="luck-card active">
@@ -825,6 +825,18 @@
                   <span class="luck-prefix">×</span>
                   <input type="number" class="luck-input" id="luck-idxpct-input" min="1" step="0.1" value="1" oninput="OnIndexMultiInput()" />
                 </div>
+              </div>
+            </div>
+            <div class="luck-section-label">Rolling Multis</div>
+            <div class="luck-list" id="luck-rolling-list"></div>
+            <div class="luck-section-label">Jackpot Roll</div>
+            <div class="luck-list">
+              <div class="luck-card" id="luck-card-jackpot">
+                <div class="luck-card-left">
+                  <button class="luck-toggle" id="luck-toggle-jackpot" onclick="ToggleJackpot()"></button>
+                  <div class="luck-card-name">Jackpot Roll</div>
+                </div>
+                <span class="luck-const-val" id="luck-jackpot-val" style="color:#3a3460">×1000</span>
               </div>
             </div>
           </div>
@@ -1047,6 +1059,7 @@
       } else if (PageID === 'luck-calc') {
         LuckCalcPage.classList.add('active');
         RenderLuckFactors();
+        RenderRollingMultis();
         UpdateServerLuckDisplay();
         CalcTotalLuck();
       } else if (PageID === 'food-calc') {
@@ -1497,7 +1510,7 @@
 
     // --- Luck Calculator
     const LuckFactors = [
-      { id: 'zone',      name: 'Zone Luck',   alwaysOn: true, constant: false, value: 0, min: 0, max: 33  },
+      { id: 'zone',      name: 'Zone Luck',   alwaysOn: true, constant: false, value: 0, min: 0, max: 38  },
       { id: 'upgrades',  name: 'Upgrades',    alwaysOn: true, constant: false, value: 0, min: 0, max: 10   },
       { id: 'rolls',     name: 'Lucky Rolls', gamepass: true, constant: true,  value: 1,  enabled: false },
       { id: 'vip',       name: 'VIP',         gamepass: true, constant: true,  value: 0.5, enabled: false },
@@ -1507,15 +1520,40 @@
       { id: 'index',     name: 'Index',       alwaysOn: true, constant: false, value: 0, min: 0, max: 4   },
     ];
 
+    const ROLL_MULTIS = [
+      { id: 'none',    label: 'None',        multi: 1    },
+      { id: 'golden',  label: 'Golden Roll',  multi: 4    },
+      { id: 'diamond', label: 'Diamond Roll', multi: 45   },
+      { id: 'void',    label: 'Void Roll',    multi: 435  },
+      { id: 'galaxy',  label: 'Galaxy Roll',  multi: 2165 },
+    ];
+
     const LuckMultis = {
-      globalLuck: { enabled: false, value: 1 },
-      server:     { level: 0 },
-      rebirths:   { value: 1 },
-      indexMul:   { value: 1 },
+      globalLuck:  { enabled: false, value: 1 },
+      server:      { level: 0 },
+      rebirths:    { value: 1 },
+      indexMul:    { value: 1 },
+      rollingMulti: { selected: 'none' },
+      jackpot:      { enabled: false },
     };
 
     function FormatLuck(n) {
       if (n >= 1e3) return FormatNum(n);
+      return n.toFixed(2).replace(/\.?0+$/, '');
+    }
+
+    function FormatLuckTotal(n) {
+      const tiers = [
+        [1e21, 'Sx'], [1e18, 'Qn'], [1e15, 'Qd'],
+        [1e12, 'T'],  [1e9,  'B'],  [1e6,  'M'],  [1e3, 'K'],
+      ];
+      for (const [base, suffix] of tiers) {
+        if (n >= base) {
+          const val = n / base;
+          const digits = val >= 100 ? 1 : val >= 10 ? 2 : 3;
+          return val.toFixed(digits).replace(/\.?0+$/, '') + suffix;
+        }
+      }
       return n.toFixed(2).replace(/\.?0+$/, '');
     }
 
@@ -1576,8 +1614,20 @@
       document.getElementById('luck-server-plus').disabled   = lvl >= 15;
     }
 
+    function ParseShorthand(raw) {
+      const s = raw.trim().toUpperCase();
+      const suffixes = { K: 1e3, M: 1e6, B: 1e9, T: 1e12 };
+      const match = s.match(/^([\d.]+)\s*([KMBT])?$/);
+      if (!match) return NaN;
+      const num = parseFloat(match[1]);
+      const mult = suffixes[match[2]] || 1;
+      return num * mult;
+    }
+
     function OnRebirthsInput() {
-      LuckMultis.rebirths.value = parseFloat(document.getElementById('luck-rebirths-input').value) || 1;
+      const raw = document.getElementById('luck-rebirths-input').value;
+      const parsed = ParseShorthand(raw);
+      LuckMultis.rebirths.value = (isNaN(parsed) || parsed < 1) ? 1 : parsed;
       CalcTotalLuck();
     }
 
@@ -1602,6 +1652,44 @@
       CalcTotalLuck();
     }
 
+    function RenderRollingMultis() {
+      const list = document.getElementById('luck-rolling-list');
+      list.innerHTML = '';
+      ROLL_MULTIS.forEach(r => {
+        const isNone = r.id === 'none';
+        const sel = LuckMultis.rollingMulti.selected === r.id;
+        const card = document.createElement('div');
+        card.className = 'luck-card' + (sel && !isNone ? ' active' : isNone && sel ? '' : '');
+        if (sel && !isNone) card.classList.add('active');
+        card.innerHTML = `
+          <div class="luck-card-left">
+            <button class="luck-toggle${sel ? ' active' : ''}" onclick="SelectRollingMulti('${r.id}')">${sel ? '✓' : ''}</button>
+            <div class="luck-card-name">${r.label}</div>
+          </div>
+          <span class="luck-const-val" style="color:${sel && !isNone ? '#a090d0' : '#3a3460'}">×${r.multi}</span>
+        `;
+        card.onclick = (e) => { if (e.target.tagName !== 'BUTTON') SelectRollingMulti(r.id); };
+        list.appendChild(card);
+      });
+    }
+
+    function SelectRollingMulti(id) {
+      LuckMultis.rollingMulti.selected = id;
+      RenderRollingMultis();
+      CalcTotalLuck();
+    }
+
+    function ToggleJackpot() {
+      LuckMultis.jackpot.enabled = !LuckMultis.jackpot.enabled;
+      const on = LuckMultis.jackpot.enabled;
+      document.getElementById('luck-card-jackpot').classList.toggle('active', on);
+      const toggle = document.getElementById('luck-toggle-jackpot');
+      toggle.classList.toggle('active', on);
+      toggle.textContent = on ? '✓' : '';
+      document.getElementById('luck-jackpot-val').style.color = on ? '#a090d0' : '#3a3460';
+      CalcTotalLuck();
+    }
+
     function CalcTotalLuck() {
       let additive = 0;
       const factorLines = [];
@@ -1617,10 +1705,19 @@
       const serverMulti  = Math.pow(2, LuckMultis.server.level);
       const rebirthMulti = LuckMultis.rebirths.value || 1;
       const idxMulti     = LuckMultis.indexMul.value || 1;
-      const totalMulti   = globalMulti * serverMulti * rebirthMulti * idxMulti;
+      const rollSel      = ROLL_MULTIS.find(r => r.id === LuckMultis.rollingMulti.selected) || ROLL_MULTIS[0];
+      const rollMulti    = rollSel.multi;
+      const jackpotMulti = LuckMultis.jackpot.enabled ? 1000 : 1;
+      const totalMulti   = globalMulti * serverMulti * rebirthMulti * idxMulti * rollMulti * jackpotMulti;
 
       const globalRow = LuckMultis.globalLuck.enabled
         ? `<div class="luck-breakdown-row"><span>Global Luck</span><span class="luck-breakdown-val">×${FormatLuck(globalMulti)}</span></div>`
+        : '';
+      const rollRow = rollSel.id !== 'none'
+        ? `<div class="luck-breakdown-row"><span>${rollSel.label}</span><span class="luck-breakdown-val">×${FormatLuck(rollMulti)}</span></div>`
+        : '';
+      const jackpotRow = LuckMultis.jackpot.enabled
+        ? `<div class="luck-breakdown-row"><span>Jackpot Roll</span><span class="luck-breakdown-val">×1000</span></div>`
         : '';
 
       document.getElementById('luck-result-rows').innerHTML = `
@@ -1633,11 +1730,13 @@
           <div class="luck-breakdown-row"><span>Server Luck</span><span class="luck-breakdown-val">×${FormatLuck(serverMulti)}</span></div>
           <div class="luck-breakdown-row"><span>Rebirths</span><span class="luck-breakdown-val">×${FormatLuck(rebirthMulti)}</span></div>
           <div class="luck-breakdown-row"><span>Index ×</span><span class="luck-breakdown-val">×${FormatLuck(idxMulti)}</span></div>
+          ${rollRow}
+          ${jackpotRow}
         </div>
         <div class="luck-result-divider"></div>
         <div class="luck-result-row">
           <span class="luck-result-total-label">Total Luck</span>
-          <span class="luck-result-total-val">${FormatLuck(additive * totalMulti)}</span>
+          <span class="luck-result-total-val">${FormatLuckTotal(additive * totalMulti)}</span>
         </div>
       `;
     }
